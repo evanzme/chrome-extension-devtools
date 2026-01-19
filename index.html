@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevTools - Developer Toolbox</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+            <path d="M8 12L12 16L8 20M14 20H24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                <stop stop-color="#6366F1"/>
+                <stop offset="1" stop-color="#8B5CF6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="logo-text">DevTools</span>
+        </div>
+      </div>
+      
+      <div class="search-box">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="toolSearch" placeholder="Search tools..." autocomplete="off">
+      </div>
+      
+      <nav class="tool-nav">
+        <div class="nav-category">
+          <span class="category-title">Encode / Decode</span>
+          <ul class="tool-list">
+            <li class="tool-item active" data-tool="json">
+              <span class="tool-icon">{ }</span>
+              <span>JSON Formatter</span>
+            </li>
+            <li class="tool-item" data-tool="base64">
+              <span class="tool-icon">B64</span>
+              <span>Base64 String</span>
+            </li>
+            <li class="tool-item" data-tool="base64-image">
+              <span class="tool-icon">🖼️</span>
+              <span>Base64 Image</span>
+            </li>
+            <li class="tool-item" data-tool="url">
+              <span class="tool-icon">🔗</span>
+              <span>URL Encode/Decode</span>
+            </li>
+            <li class="tool-item" data-tool="html-entity">
+              <span class="tool-icon">&lt;&gt;</span>
+              <span>HTML Entity</span>
+            </li>
+            <li class="tool-item" data-tool="backslash">
+              <span class="tool-icon">\\</span>
+              <span>Backslash Escape</span>
+            </li>
+            <li class="tool-item" data-tool="jwt">
+              <span class="tool-icon">🔐</span>
+              <span>JWT Debugger</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="nav-category">
+          <span class="category-title">Generators</span>
+          <ul class="tool-list">
+            <li class="tool-item" data-tool="uuid">
+              <span class="tool-icon">🆔</span>
+              <span>UUID Generator</span>
+            </li>
+            <li class="tool-item" data-tool="hash">
+              <span class="tool-icon">#</span>
+              <span>Hash Generator</span>
+            </li>
+            <li class="tool-item" data-tool="password">
+              <span class="tool-icon">🔑</span>
+              <span>Password Generator</span>
+            </li>
+            <li class="tool-item" data-tool="lorem">
+              <span class="tool-icon">📝</span>
+              <span>Lorem Ipsum</span>
+            </li>
+            <li class="tool-item" data-tool="qrcode">
+              <span class="tool-icon">◳</span>
+              <span>QR Code Generator</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="nav-category">
+          <span class="category-title">Converters</span>
+          <ul class="tool-list">
+            <li class="tool-item" data-tool="unix-time">
+              <span class="tool-icon">⏰</span>
+              <span>Unix Time</span>
+            </li>
+            <li class="tool-item" data-tool="number-base">
+              <span class="tool-icon">2⁸</span>
+              <span>Number Base</span>
+            </li>
+            <li class="tool-item" data-tool="color">
+              <span class="tool-icon">🎨</span>
+              <span>Color Converter</span>
+            </li>
+            <li class="tool-item" data-tool="case">
+              <span class="tool-icon">Aa</span>
+              <span>Case Converter</span>
+            </li>
+            <li class="tool-item" data-tool="yaml-json">
+              <span class="tool-icon">⇄</span>
+              <span>YAML ↔ JSON</span>
+            </li>
+            <li class="tool-item" data-tool="csv-json">
+              <span class="tool-icon">📊</span>
+              <span>CSV ↔ JSON</span>
+            </li>
+            <li class="tool-item" data-tool="hex-ascii">
+              <span class="tool-icon">0x</span>
+              <span>Hex ↔ ASCII</span>
+            </li>
+            <li class="tool-item" data-tool="html-jsx">
+              <span class="tool-icon">⚛️</span>
+              <span>HTML → JSX</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="nav-category">
+          <span class="category-title">Text Tools</span>
+          <ul class="tool-list">
+            <li class="tool-item" data-tool="diff">
+              <span class="tool-icon">≠</span>
+              <span>Text Diff</span>
+            </li>
+            <li class="tool-item" data-tool="regex">
+              <span class="tool-icon">.*</span>
+              <span>RegExp Tester</span>
+            </li>
+            <li class="tool-item" data-tool="markdown">
+              <span class="tool-icon">M↓</span>
+              <span>Markdown Preview</span>
+            </li>
+            <li class="tool-item" data-tool="html-preview">
+              <span class="tool-icon">🌐</span>
+              <span>HTML Preview</span>
+            </li>
+            <li class="tool-item" data-tool="string-inspector">
+              <span class="tool-icon">🔍</span>
+              <span>String Inspector</span>
+            </li>
+            <li class="tool-item" data-tool="line-sort">
+              <span class="tool-icon">↕️</span>
+              <span>Line Sort/Dedupe</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="nav-category">
+          <span class="category-title">Formatters</span>
+          <ul class="tool-list">
+            <li class="tool-item" data-tool="html-format">
+              <span class="tool-icon">📄</span>
+              <span>HTML Formatter</span>
+            </li>
+            <li class="tool-item" data-tool="css-format">
+              <span class="tool-icon">🎨</span>
+              <span>CSS Formatter</span>
+            </li>
+            <li class="tool-item" data-tool="js-format">
+              <span class="tool-icon">JS</span>
+              <span>JS Formatter</span>
+            </li>
+            <li class="tool-item" data-tool="xml-format">
+              <span class="tool-icon">📰</span>
+              <span>XML Formatter</span>
+            </li>
+            <li class="tool-item" data-tool="sql-format">
+              <span class="tool-icon">🗃️</span>
+              <span>SQL Formatter</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="nav-category">
+          <span class="category-title">Developer Tools</span>
+          <ul class="tool-list">
+            <li class="tool-item" data-tool="cron-parser">
+              <span class="tool-icon">📅</span>
+              <span>Cron Parser</span>
+            </li>
+            <li class="tool-item" data-tool="curl-code">
+              <span class="tool-icon">$_</span>
+              <span>cURL → Code</span>
+            </li>
+            <li class="tool-item" data-tool="json-code">
+              <span class="tool-icon">{ }</span>
+              <span>JSON → Code</span>
+            </li>
+            <li class="tool-item" data-tool="cert-decoder">
+              <span class="tool-icon">🔏</span>
+              <span>Cert Decoder</span>
+            </li>
+            <li class="tool-item" data-tool="svg-css">
+              <span class="tool-icon">▲</span>
+              <span>SVG → CSS</span>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="lang-toggle" id="langToggle" title="Switch Language">
+          <span class="lang-text">EN</span>
+        </button>
+        <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- JSON Formatter -->
+      <div class="tool-panel active" id="tool-json">
+        <div class="tool-header">
+          <h1>JSON Format / Validate</h1>
+          <p class="tool-desc">Format, minify and validate JSON data</p>
+        </div>
+        <div class="tool-body json-tool">
+          <div class="editor-container">
+            <div class="editor-header">
+              <span>Input JSON</span>
+              <div class="editor-actions">
+                <button class="btn-icon" data-action="paste" title="Paste">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                  </svg>
+                </button>
+                <button class="btn-icon" data-action="clear" title="Clear">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <textarea id="jsonInput" class="code-editor" placeholder='{"example": "paste your JSON here"}'></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="jsonFormat">Format</button>
+            <button class="btn btn-secondary" id="jsonMinify">Minify</button>
+            <button class="btn btn-secondary" id="jsonValidate">Validate</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header">
+              <span>Output</span>
+              <div class="editor-actions">
+                <button class="btn-icon" data-action="copy" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <textarea id="jsonOutput" class="code-editor" readonly placeholder="Formatted result will appear here"></textarea>
+          </div>
+          <div class="status-bar" id="jsonStatus"></div>
+        </div>
+      </div>
+      
+      <!-- Base64 String -->
+      <div class="tool-panel" id="tool-base64">
+        <div class="tool-header">
+          <h1>Base64 Encode / Decode</h1>
+          <p class="tool-desc">Encode and decode strings using Base64</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header">
+              <span>Input Text</span>
+              <div class="editor-actions">
+                <button class="btn-icon" data-action="paste" title="Paste">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                  </svg>
+                </button>
+                <button class="btn-icon" data-action="clear" title="Clear">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <textarea id="base64Input" class="code-editor" placeholder="Enter text to encode or decode"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="base64Encode">Encode</button>
+            <button class="btn btn-secondary" id="base64Decode">Decode</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header">
+              <span>Output</span>
+              <div class="editor-actions">
+                <button class="btn-icon" data-action="copy" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <textarea id="base64Output" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- URL Encode/Decode -->
+      <div class="tool-panel" id="tool-url">
+        <div class="tool-header">
+          <h1>URL Encode / Decode</h1>
+          <p class="tool-desc">Encode, decode and parse URLs</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input URL</span></div>
+            <textarea id="urlInput" class="code-editor" placeholder="Enter URL to encode or decode"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="urlEncode">Encode</button>
+            <button class="btn btn-secondary" id="urlDecode">Decode</button>
+            <button class="btn btn-secondary" id="urlParse">Parse URL</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header">
+              <span>Output</span>
+              <div class="editor-actions">
+                <button class="btn-icon" data-action="copy" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <textarea id="urlOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- HTML Entity -->
+      <div class="tool-panel" id="tool-html-entity">
+        <div class="tool-header">
+          <h1>HTML Entity Encode / Decode</h1>
+          <p class="tool-desc">Encode and decode HTML entities</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input Text</span></div>
+            <textarea id="htmlEntityInput" class="code-editor" placeholder="Enter text with special characters"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="htmlEntityEncode">Encode</button>
+            <button class="btn btn-secondary" id="htmlEntityDecode">Decode</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="htmlEntityOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- JWT Debugger -->
+      <div class="tool-panel" id="tool-jwt">
+        <div class="tool-header">
+          <h1>JWT Debugger</h1>
+          <p class="tool-desc">Parse and debug JSON Web Tokens</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>JWT Token</span></div>
+            <textarea id="jwtInput" class="code-editor" placeholder="Paste your JWT token here..."></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="jwtDecode">Decode Token</button>
+          </div>
+          <div class="jwt-result">
+            <div class="jwt-section">
+              <h3>Header <span class="jwt-color header">Red</span></h3>
+              <pre id="jwtHeader" class="code-block"></pre>
+            </div>
+            <div class="jwt-section">
+              <h3>Payload <span class="jwt-color payload">Purple</span></h3>
+              <pre id="jwtPayload" class="code-block"></pre>
+            </div>
+            <div class="jwt-section">
+              <h3>Signature <span class="jwt-color signature">Cyan</span></h3>
+              <pre id="jwtSignature" class="code-block"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- UUID Generator -->
+      <div class="tool-panel" id="tool-uuid">
+        <div class="tool-header">
+          <h1>UUID Generator</h1>
+          <p class="tool-desc">Generate UUID v4 and ULID</p>
+        </div>
+        <div class="tool-body">
+          <div class="option-group">
+            <label>Count:</label>
+            <input type="number" id="uuidCount" value="5" min="1" max="100" class="input-number">
+            <label class="checkbox-label">
+              <input type="checkbox" id="uuidUppercase"> Uppercase
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="uuidNoDash"> No Dashes
+            </label>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="generateUUID">Generate UUID v4</button>
+            <button class="btn btn-secondary" id="generateULID">Generate ULID</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header">
+              <span>Generated</span>
+              <div class="editor-actions">
+                <button class="btn-icon" data-action="copy" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <textarea id="uuidOutput" class="code-editor" readonly placeholder="Click button to generate UUID"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hash Generator -->
+      <div class="tool-panel" id="tool-hash">
+        <div class="tool-header">
+          <h1>Hash Generator</h1>
+          <p class="tool-desc">Generate MD5, SHA-1, SHA-256, SHA-512 hashes</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input Text</span></div>
+            <textarea id="hashInput" class="code-editor" placeholder="Enter text to hash"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="generateHash">Generate Hash</button>
+          </div>
+          <div class="hash-results">
+            <div class="hash-item">
+              <label>MD5</label>
+              <div class="hash-value-container">
+                <input type="text" id="hashMD5" class="hash-value" readonly>
+                <button class="btn-icon btn-copy" data-target="hashMD5" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="hash-item">
+              <label>SHA-1</label>
+              <div class="hash-value-container">
+                <input type="text" id="hashSHA1" class="hash-value" readonly>
+                <button class="btn-icon btn-copy" data-target="hashSHA1" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="hash-item">
+              <label>SHA-256</label>
+              <div class="hash-value-container">
+                <input type="text" id="hashSHA256" class="hash-value" readonly>
+                <button class="btn-icon btn-copy" data-target="hashSHA256" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="hash-item">
+              <label>SHA-512</label>
+              <div class="hash-value-container">
+                <input type="text" id="hashSHA512" class="hash-value" readonly>
+                <button class="btn-icon btn-copy" data-target="hashSHA512" title="Copy">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Password Generator -->
+      <div class="tool-panel" id="tool-password">
+        <div class="tool-header">
+          <h1>Password Generator</h1>
+          <p class="tool-desc">Generate secure random passwords</p>
+        </div>
+        <div class="tool-body">
+          <div class="option-group">
+            <label>Length:</label>
+            <input type="number" id="passwordLength" value="16" min="4" max="128" class="input-number">
+          </div>
+          <div class="option-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="pwdUppercase" checked> Uppercase (A-Z)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="pwdLowercase" checked> Lowercase (a-z)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="pwdNumbers" checked> Numbers (0-9)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="pwdSymbols" checked> Symbols (!@#$...)
+            </label>
+          </div>
+          <div class="option-group">
+            <label>Count:</label>
+            <input type="number" id="passwordCount" value="5" min="1" max="50" class="input-number">
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="generatePassword">Generate</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Generated</span></div>
+            <textarea id="passwordOutput" class="code-editor" readonly placeholder="Click button to generate passwords"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Lorem Ipsum -->
+      <div class="tool-panel" id="tool-lorem">
+        <div class="tool-header">
+          <h1>Lorem Ipsum Generator</h1>
+          <p class="tool-desc">Generate placeholder text for design and development</p>
+        </div>
+        <div class="tool-body">
+          <div class="option-group">
+            <label>Type:</label>
+            <select id="loremType" class="select-input">
+              <option value="paragraphs">Paragraphs</option>
+              <option value="sentences">Sentences</option>
+              <option value="words">Words</option>
+            </select>
+            <label>Count:</label>
+            <input type="number" id="loremCount" value="3" min="1" max="100" class="input-number">
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="generateLorem">Generate</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Generated</span></div>
+            <textarea id="loremOutput" class="code-editor" readonly placeholder="Click button to generate text"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Unix Time -->
+      <div class="tool-panel" id="tool-unix-time">
+        <div class="tool-header">
+          <h1>Unix Time Converter</h1>
+          <p class="tool-desc">Convert between Unix timestamp and date/time</p>
+        </div>
+        <div class="tool-body">
+          <div class="current-time-display">
+            <span>Current Timestamp:</span>
+            <span id="currentTimestamp" class="timestamp-value"></span>
+            <button class="btn btn-sm" id="refreshTimestamp">Refresh</button>
+          </div>
+          <div class="time-converter-grid">
+            <div class="converter-section">
+              <h3>Timestamp → Date</h3>
+              <div class="input-group">
+                <input type="text" id="timestampInput" class="text-input" placeholder="Enter Unix timestamp">
+                <select id="timestampUnit" class="select-input">
+                  <option value="s">Seconds (s)</option>
+                  <option value="ms">Milliseconds (ms)</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="convertToDate">Convert to Date</button>
+              <div class="result-box">
+                <div class="result-item">
+                  <label>Local Time:</label>
+                  <span id="localTime">-</span>
+                </div>
+                <div class="result-item">
+                  <label>UTC Time:</label>
+                  <span id="utcTime">-</span>
+                </div>
+                <div class="result-item">
+                  <label>ISO 8601:</label>
+                  <span id="isoTime">-</span>
+                </div>
+              </div>
+            </div>
+            <div class="converter-section">
+              <h3>Date → Timestamp</h3>
+              <div class="input-group">
+                <input type="datetime-local" id="dateInput" class="text-input">
+              </div>
+              <button class="btn btn-primary" id="convertToTimestamp">Convert to Timestamp</button>
+              <div class="result-box">
+                <div class="result-item">
+                  <label>Seconds:</label>
+                  <span id="resultSeconds">-</span>
+                </div>
+                <div class="result-item">
+                  <label>Milliseconds:</label>
+                  <span id="resultMillis">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Number Base -->
+      <div class="tool-panel" id="tool-number-base">
+        <div class="tool-header">
+          <h1>Number Base Converter</h1>
+          <p class="tool-desc">Convert between binary, octal, decimal and hexadecimal</p>
+        </div>
+        <div class="tool-body">
+          <div class="base-converter-grid">
+            <div class="base-input-group">
+              <label>Binary</label>
+              <input type="text" id="binaryInput" class="text-input mono" placeholder="e.g. 1010">
+            </div>
+            <div class="base-input-group">
+              <label>Octal</label>
+              <input type="text" id="octalInput" class="text-input mono" placeholder="e.g. 12">
+            </div>
+            <div class="base-input-group">
+              <label>Decimal</label>
+              <input type="text" id="decimalInput" class="text-input mono" placeholder="e.g. 10">
+            </div>
+            <div class="base-input-group">
+              <label>Hexadecimal</label>
+              <input type="text" id="hexInput" class="text-input mono" placeholder="e.g. A">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Color Converter -->
+      <div class="tool-panel" id="tool-color">
+        <div class="tool-header">
+          <h1>Color Converter</h1>
+          <p class="tool-desc">Convert between HEX, RGB, HSL color formats</p>
+        </div>
+        <div class="tool-body">
+          <div class="color-picker-section">
+            <input type="color" id="colorPicker" value="#6366f1">
+            <div class="color-preview" id="colorPreview"></div>
+          </div>
+          <div class="color-values-grid">
+            <div class="color-value-group">
+              <label>HEX</label>
+              <input type="text" id="colorHex" class="text-input mono" value="#6366f1">
+            </div>
+            <div class="color-value-group">
+              <label>RGB</label>
+              <input type="text" id="colorRGB" class="text-input mono" value="rgb(99, 102, 241)">
+            </div>
+            <div class="color-value-group">
+              <label>HSL</label>
+              <input type="text" id="colorHSL" class="text-input mono" value="hsl(239, 84%, 67%)">
+            </div>
+            <div class="color-value-group">
+              <label>RGBA</label>
+              <input type="text" id="colorRGBA" class="text-input mono" value="rgba(99, 102, 241, 1)">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Case Converter -->
+      <div class="tool-panel" id="tool-case">
+        <div class="tool-header">
+          <h1>Case Converter</h1>
+          <p class="tool-desc">Convert text to different case formats</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input Text</span></div>
+            <textarea id="caseInput" class="code-editor" placeholder="Enter text to convert"></textarea>
+          </div>
+          <div class="case-buttons">
+            <button class="btn btn-secondary" data-case="upper">UPPERCASE</button>
+            <button class="btn btn-secondary" data-case="lower">lowercase</button>
+            <button class="btn btn-secondary" data-case="title">Title Case</button>
+            <button class="btn btn-secondary" data-case="sentence">Sentence case</button>
+            <button class="btn btn-secondary" data-case="camel">camelCase</button>
+            <button class="btn btn-secondary" data-case="pascal">PascalCase</button>
+            <button class="btn btn-secondary" data-case="snake">snake_case</button>
+            <button class="btn btn-secondary" data-case="kebab">kebab-case</button>
+            <button class="btn btn-secondary" data-case="constant">CONSTANT_CASE</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="caseOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Text Diff -->
+      <div class="tool-panel" id="tool-diff">
+        <div class="tool-header">
+          <h1>Text Diff Checker</h1>
+          <p class="tool-desc">Compare two texts and find differences</p>
+        </div>
+        <div class="tool-body diff-tool">
+          <div class="diff-inputs">
+            <div class="editor-container">
+              <div class="editor-header"><span>Original Text</span></div>
+              <textarea id="diffInput1" class="code-editor" placeholder="Enter original text"></textarea>
+            </div>
+            <div class="editor-container">
+              <div class="editor-header"><span>Compare Text</span></div>
+              <textarea id="diffInput2" class="code-editor" placeholder="Enter text to compare"></textarea>
+            </div>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="compareDiff">Compare</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Diff Result</span></div>
+            <div id="diffOutput" class="diff-output"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- RegExp Tester -->
+      <div class="tool-panel" id="tool-regex">
+        <div class="tool-header">
+          <h1>RegExp Tester</h1>
+          <p class="tool-desc">Test and debug regular expressions</p>
+        </div>
+        <div class="tool-body">
+          <div class="regex-input-section">
+            <div class="regex-pattern-input">
+              <span class="regex-delimiter">/</span>
+              <input type="text" id="regexPattern" class="text-input mono" placeholder="Enter regular expression">
+              <span class="regex-delimiter">/</span>
+              <input type="text" id="regexFlags" class="text-input mono regex-flags" placeholder="gim" value="g">
+            </div>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Test String</span></div>
+            <textarea id="regexInput" class="code-editor" placeholder="Enter text to test"></textarea>
+          </div>
+          <div class="regex-results">
+            <div class="regex-info">
+              <span>Matches: <strong id="matchCount">0</strong></span>
+            </div>
+            <div id="regexMatches" class="matches-container"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Markdown Preview -->
+      <div class="tool-panel" id="tool-markdown">
+        <div class="tool-header">
+          <h1>Markdown Preview</h1>
+          <p class="tool-desc">Live preview of Markdown rendering</p>
+        </div>
+        <div class="tool-body markdown-tool">
+          <div class="markdown-container">
+            <div class="editor-container">
+              <div class="editor-header"><span>Markdown Input</span></div>
+              <textarea id="markdownInput" class="code-editor" placeholder="# Enter Markdown
+
+## Heading 2
+
+This is a paragraph with **bold** and *italic* text.
+
+- List item 1
+- List item 2
+
+```javascript
+console.log('Hello World');
+```"></textarea>
+            </div>
+            <div class="editor-container">
+              <div class="editor-header"><span>Preview</span></div>
+              <div id="markdownPreview" class="markdown-preview"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Base64 Image -->
+      <div class="tool-panel" id="tool-base64-image">
+        <div class="tool-header">
+          <h1>Base64 Image Encode / Decode</h1>
+          <p class="tool-desc">Convert images to Base64 or Base64 to images</p>
+        </div>
+        <div class="tool-body">
+          <div class="option-group">
+            <label>Upload Image:</label>
+            <input type="file" id="imageFileInput" accept="image/*" class="file-input">
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="imageToBase64">Image → Base64</button>
+            <button class="btn btn-secondary" id="base64ToImage">Base64 → Image</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Base64 String</span></div>
+            <textarea id="base64ImageInput" class="code-editor" placeholder="Paste Base64 string or upload image to generate"></textarea>
+          </div>
+          <div class="image-preview-container">
+            <div class="editor-header"><span>Image Preview</span></div>
+            <div id="imagePreview" class="image-preview"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Backslash Escape -->
+      <div class="tool-panel" id="tool-backslash">
+        <div class="tool-header">
+          <h1>Backslash Escape / Unescape</h1>
+          <p class="tool-desc">Escape and unescape special characters with backslash</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input Text</span></div>
+            <textarea id="backslashInput" class="code-editor" placeholder="Enter text to escape"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="backslashEscape">Escape</button>
+            <button class="btn btn-secondary" id="backslashUnescape">Unescape</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="backslashOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- QR Code Generator -->
+      <div class="tool-panel" id="tool-qrcode">
+        <div class="tool-header">
+          <h1>QR Code Generator</h1>
+          <p class="tool-desc">Generate QR codes from text or URLs</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input Content</span></div>
+            <textarea id="qrcodeInput" class="code-editor" placeholder="Enter text or URL to generate QR code"></textarea>
+          </div>
+          <div class="option-group">
+            <label>Size:</label>
+            <select id="qrcodeSize" class="select-input">
+              <option value="128">128 x 128</option>
+              <option value="256" selected>256 x 256</option>
+              <option value="512">512 x 512</option>
+            </select>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="generateQRCode">Generate QR Code</button>
+          </div>
+          <div class="qrcode-preview-container">
+            <div class="editor-header"><span>QR Code Preview</span></div>
+            <div id="qrcodePreview" class="qrcode-preview"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- YAML ↔ JSON -->
+      <div class="tool-panel" id="tool-yaml-json">
+        <div class="tool-header">
+          <h1>YAML ↔ JSON Converter</h1>
+          <p class="tool-desc">Convert between YAML and JSON formats</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input</span></div>
+            <textarea id="yamlJsonInput" class="code-editor" placeholder="Enter YAML or JSON"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="yamlToJson">YAML → JSON</button>
+            <button class="btn btn-secondary" id="jsonToYaml">JSON → YAML</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="yamlJsonOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CSV ↔ JSON -->
+      <div class="tool-panel" id="tool-csv-json">
+        <div class="tool-header">
+          <h1>CSV ↔ JSON Converter</h1>
+          <p class="tool-desc">Convert between CSV and JSON formats</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input</span></div>
+            <textarea id="csvJsonInput" class="code-editor" placeholder="Enter CSV or JSON data"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="csvToJson">CSV → JSON</button>
+            <button class="btn btn-secondary" id="jsonToCsv">JSON → CSV</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="csvJsonOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hex ↔ ASCII -->
+      <div class="tool-panel" id="tool-hex-ascii">
+        <div class="tool-header">
+          <h1>Hex ↔ ASCII Converter</h1>
+          <p class="tool-desc">Convert between hexadecimal and ASCII text</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input</span></div>
+            <textarea id="hexAsciiInput" class="code-editor" placeholder="Enter Hex or ASCII text"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="asciiToHex">ASCII → Hex</button>
+            <button class="btn btn-secondary" id="hexToAscii">Hex → ASCII</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="hexAsciiOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- HTML → JSX -->
+      <div class="tool-panel" id="tool-html-jsx">
+        <div class="tool-header">
+          <h1>HTML → JSX Converter</h1>
+          <p class="tool-desc">Convert HTML code to React JSX format</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>HTML Input</span></div>
+            <textarea id="htmlJsxInput" class="code-editor" placeholder="Enter HTML code"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="convertToJsx">Convert to JSX</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>JSX Output</span></div>
+            <textarea id="htmlJsxOutput" class="code-editor" readonly placeholder="JSX code will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- HTML Preview -->
+      <div class="tool-panel" id="tool-html-preview">
+        <div class="tool-header">
+          <h1>HTML Preview</h1>
+          <p class="tool-desc">Live preview of HTML code rendering</p>
+        </div>
+        <div class="tool-body html-preview-tool">
+          <div class="html-preview-container">
+            <div class="editor-container">
+              <div class="editor-header"><span>HTML Code</span></div>
+              <textarea id="htmlPreviewInput" class="code-editor" placeholder="Enter HTML code"></textarea>
+            </div>
+            <div class="editor-container">
+              <div class="editor-header"><span>Preview</span></div>
+              <iframe id="htmlPreviewFrame" class="html-preview-frame"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- String Inspector -->
+      <div class="tool-panel" id="tool-string-inspector">
+        <div class="tool-header">
+          <h1>String Inspector</h1>
+          <p class="tool-desc">Inspect string details and statistics</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input String</span></div>
+            <textarea id="stringInspectorInput" class="code-editor" placeholder="Enter string to inspect"></textarea>
+          </div>
+          <div class="string-stats">
+            <div class="stat-grid">
+              <div class="stat-item"><label>Characters</label><span id="statChars">0</span></div>
+              <div class="stat-item"><label>Chars (no spaces)</label><span id="statCharsNoSpace">0</span></div>
+              <div class="stat-item"><label>Words</label><span id="statWords">0</span></div>
+              <div class="stat-item"><label>Lines</label><span id="statLines">0</span></div>
+              <div class="stat-item"><label>Bytes (UTF-8)</label><span id="statBytes">0</span></div>
+              <div class="stat-item"><label>Paragraphs</label><span id="statParagraphs">0</span></div>
+            </div>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Character Details (Unicode)</span></div>
+            <div id="charDetails" class="char-details"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Line Sort/Dedupe -->
+      <div class="tool-panel" id="tool-line-sort">
+        <div class="tool-header">
+          <h1>Line Sort / Dedupe</h1>
+          <p class="tool-desc">Sort, deduplicate, reverse lines of text</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input Text</span></div>
+            <textarea id="lineSortInput" class="code-editor" placeholder="One item per line"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="sortAsc">Sort A→Z</button>
+            <button class="btn btn-secondary" id="sortDesc">Sort Z→A</button>
+            <button class="btn btn-secondary" id="dedupe">Dedupe</button>
+            <button class="btn btn-secondary" id="reverse">Reverse</button>
+            <button class="btn btn-secondary" id="shuffle">Shuffle</button>
+            <button class="btn btn-secondary" id="trimLines">Remove Empty</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="lineSortOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- HTML Formatter -->
+      <div class="tool-panel" id="tool-html-format">
+        <div class="tool-header">
+          <h1>HTML Beautify / Minify</h1>
+          <p class="tool-desc">Format or minify HTML code</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input HTML</span></div>
+            <textarea id="htmlFormatInput" class="code-editor" placeholder="Enter HTML code"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="htmlBeautify">Beautify</button>
+            <button class="btn btn-secondary" id="htmlMinify">Minify</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="htmlFormatOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CSS Formatter -->
+      <div class="tool-panel" id="tool-css-format">
+        <div class="tool-header">
+          <h1>CSS Beautify / Minify</h1>
+          <p class="tool-desc">Format or minify CSS code</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input CSS</span></div>
+            <textarea id="cssFormatInput" class="code-editor" placeholder="Enter CSS code"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="cssBeautify">Beautify</button>
+            <button class="btn btn-secondary" id="cssMinify">Minify</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="cssFormatOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- JS Formatter -->
+      <div class="tool-panel" id="tool-js-format">
+        <div class="tool-header">
+          <h1>JavaScript Beautify / Minify</h1>
+          <p class="tool-desc">Format or minify JavaScript code</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input JavaScript</span></div>
+            <textarea id="jsFormatInput" class="code-editor" placeholder="Enter JavaScript code"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="jsBeautify">Beautify</button>
+            <button class="btn btn-secondary" id="jsMinify">Minify</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="jsFormatOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- XML Formatter -->
+      <div class="tool-panel" id="tool-xml-format">
+        <div class="tool-header">
+          <h1>XML Beautify / Minify</h1>
+          <p class="tool-desc">Format or minify XML code</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input XML</span></div>
+            <textarea id="xmlFormatInput" class="code-editor" placeholder="Enter XML code"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="xmlBeautify">Beautify</button>
+            <button class="btn btn-secondary" id="xmlMinify">Minify</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="xmlFormatOutput" class="code-editor" readonly placeholder="Result will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- SQL Formatter -->
+      <div class="tool-panel" id="tool-sql-format">
+        <div class="tool-header">
+          <h1>SQL Formatter</h1>
+          <p class="tool-desc">Format SQL queries</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Input SQL</span></div>
+            <textarea id="sqlFormatInput" class="code-editor" placeholder="SELECT * FROM users WHERE id = 1"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="sqlBeautify">Beautify</button>
+            <button class="btn btn-secondary" id="sqlMinify">Minify</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Output</span></div>
+            <textarea id="sqlFormatOutput" class="code-editor" readonly placeholder="Formatted SQL will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cron Parser -->
+      <div class="tool-panel" id="tool-cron-parser">
+        <div class="tool-header">
+          <h1>Cron Job Parser</h1>
+          <p class="tool-desc">Parse and validate Cron expressions</p>
+        </div>
+        <div class="tool-body">
+          <div class="cron-input-section">
+            <div class="editor-header"><span>Cron Expression</span></div>
+            <input type="text" id="cronInput" class="text-input mono" placeholder="* * * * * (min hour day month weekday)" value="0 9 * * 1-5">
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="parseCron">Parse</button>
+          </div>
+          <div class="cron-results">
+            <div class="cron-description">
+              <label>Description:</label>
+              <span id="cronDescription">-</span>
+            </div>
+            <div class="cron-next-runs">
+              <label>Next executions:</label>
+              <ul id="cronNextRuns"></ul>
+            </div>
+          </div>
+          <div class="cron-help">
+            <h4>Cron Format</h4>
+            <div class="cron-format">
+              <code>minute(0-59) hour(0-23) day(1-31) month(1-12) weekday(0-7)</code>
+            </div>
+            <div class="cron-examples">
+              <div class="example"><code>* * * * *</code> Every minute</div>
+              <div class="example"><code>0 * * * *</code> Every hour</div>
+              <div class="example"><code>0 0 * * *</code> Every day at midnight</div>
+              <div class="example"><code>0 9 * * 1-5</code> Weekdays at 9 AM</div>
+              <div class="example"><code>*/15 * * * *</code> Every 15 minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- cURL → Code -->
+      <div class="tool-panel" id="tool-curl-code">
+        <div class="tool-header">
+          <h1>cURL → Code</h1>
+          <p class="tool-desc">Convert cURL commands to programming language code</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>cURL Command</span></div>
+            <textarea id="curlInput" class="code-editor" placeholder="curl -X POST https://api.example.com/data -H 'Content-Type: application/json' -d '{\"key\":\"value\"}'"></textarea>
+          </div>
+          <div class="option-group">
+            <label>Target Language:</label>
+            <select id="curlTargetLang" class="select-input">
+              <option value="javascript">JavaScript (fetch)</option>
+              <option value="python">Python (requests)</option>
+              <option value="php">PHP (cURL)</option>
+              <option value="go">Go (net/http)</option>
+              <option value="java">Java (HttpClient)</option>
+            </select>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="convertCurl">Convert</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Generated Code</span></div>
+            <textarea id="curlOutput" class="code-editor" readonly placeholder="Code will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- JSON → Code -->
+      <div class="tool-panel" id="tool-json-code">
+        <div class="tool-header">
+          <h1>JSON → Code</h1>
+          <p class="tool-desc">Convert JSON to type definitions in various languages</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>JSON Input</span></div>
+            <textarea id="jsonCodeInput" class="code-editor" placeholder='{"name": "John", "age": 30, "email": "john@example.com"}'></textarea>
+          </div>
+          <div class="option-group">
+            <label>Target Language:</label>
+            <select id="jsonTargetLang" class="select-input">
+              <option value="typescript">TypeScript Interface</option>
+              <option value="go">Go Struct</option>
+              <option value="python">Python Dataclass</option>
+              <option value="java">Java Class</option>
+              <option value="swift">Swift Struct</option>
+            </select>
+            <label>Root Type Name:</label>
+            <input type="text" id="jsonRootName" class="text-input" value="Root" style="width: 100px;">
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="convertJsonCode">Convert</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>Generated Code</span></div>
+            <textarea id="jsonCodeOutput" class="code-editor" readonly placeholder="Code will appear here"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Certificate Decoder -->
+      <div class="tool-panel" id="tool-cert-decoder">
+        <div class="tool-header">
+          <h1>X.509 Certificate Decoder</h1>
+          <p class="tool-desc">Parse and view X.509 certificate information</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>Certificate (PEM Format)</span></div>
+            <textarea id="certInput" class="code-editor" placeholder="-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="decodeCert">Decode Certificate</button>
+          </div>
+          <div class="cert-results">
+            <div id="certOutput" class="cert-details"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- SVG → CSS -->
+      <div class="tool-panel" id="tool-svg-css">
+        <div class="tool-header">
+          <h1>SVG → CSS Background</h1>
+          <p class="tool-desc">Convert SVG to CSS background-image</p>
+        </div>
+        <div class="tool-body">
+          <div class="editor-container">
+            <div class="editor-header"><span>SVG Code</span></div>
+            <textarea id="svgInput" class="code-editor" placeholder="<svg>...</svg>"></textarea>
+          </div>
+          <div class="tool-actions">
+            <button class="btn btn-primary" id="convertSvgCss">Convert to CSS</button>
+          </div>
+          <div class="editor-container">
+            <div class="editor-header"><span>CSS Output</span></div>
+            <textarea id="svgCssOutput" class="code-editor" readonly placeholder="CSS code will appear here"></textarea>
+          </div>
+          <div class="svg-preview-container">
+            <div class="editor-header"><span>Preview</span></div>
+            <div id="svgPreview" class="svg-preview"></div>
+          </div>
+        </div>
+      </div>
+      
+    </main>
+  </div>
+  
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+  
+  <script src="libs/md5.min.js"></script>
+  <script src="libs/sha1.min.js"></script>
+  <script src="libs/sha256.min.js"></script>
+  <script src="libs/sha512.min.js"></script>
+  <script src="libs/marked.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
