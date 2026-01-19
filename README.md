@@ -127,7 +127,3 @@ devUtils/
 ## License
 
 MIT License
-
-## Credits
-
-Design inspired by [DevUtils](https://devutils.com/)
