@@ -4,6 +4,11 @@ A feature-rich Chrome extension providing 40+ essential developer utilities, ins
 
 ![DevTools](icons/icon128.png)
 
+## Screenshots
+
+![DevTools Screenshot](screenshots/screenshot1.png)
+
+
 ## Features (40+ Tools)
 
 ### Encode / Decode (7 tools)
