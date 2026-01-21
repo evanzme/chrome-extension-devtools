@@ -65,8 +65,7 @@ We may update this privacy policy from time to time. Any changes will be reflect
 ## Contact
 
 If you have questions about this privacy policy, please contact:
-- GitHub Issues: [Your Repository URL]
-- Email: [Your Email]
+- GitHub Issues: https://github.com/evanzme/chrome-extension-devtools/issues
 
 ## Consent
 
