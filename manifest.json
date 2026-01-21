@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "DevTools",
   "version": "1.0.0",
-  "description": "40+ essential developer utilities: JSON formatter, Base64/URL encoder, hash generator, JWT debugger, regex tester, code formatters and more",
+  "description": "40+ developer tools: JSON formatter, Base64/URL encoder, hash generator, JWT debugger, regex tester, and more",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -18,5 +18,9 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "clipboardWrite", "clipboardRead"]
+  "permissions": [
+    "storage",
+    "clipboardWrite",
+    "clipboardRead"
+  ]
 }
