@@ -2,27 +2,65 @@
 // DevTools - Main Application
 // ========================================
 
-(function() {
+(function () {
   'use strict';
 
   // ========================================
   // Utility Functions
   // ========================================
-  
+
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => document.querySelectorAll(selector);
+
+  // Auto-save input data to localStorage
+  function enableAutoSave(inputId, storageKey) {
+    const input = $(inputId);
+    if (!input) return;
+
+    // Restore saved data on load
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        input.value = saved;
+      }
+    } catch (e) {
+      console.error('Failed to restore data:', e);
+    }
+
+    // Save data on input with debounce
+    let saveTimer;
+    input.addEventListener('input', function () {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try {
+          localStorage.setItem(storageKey, input.value);
+        } catch (e) {
+          console.error('Failed to save data:', e);
+        }
+      }, 500); // Debounce 500ms
+    });
+  }
+
+  // Clear saved data for a specific tool
+  function clearAutoSave(storageKey) {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch (e) {
+      console.error('Failed to clear data:', e);
+    }
+  }
 
   // ========================================
   // Internationalization (i18n)
   // ========================================
-  
+
   let currentLang = 'en';
-  
+
   const translations = {
     en: {
       // Search
       searchPlaceholder: 'Search tools...',
-      
+
       // Categories
       catEncodeDecode: 'Encode / Decode',
       catGenerators: 'Generators',
@@ -30,7 +68,7 @@
       catTextTools: 'Text Tools',
       catFormatters: 'Formatters',
       catDevTools: 'Developer Tools',
-      
+
       // Tool Names - Encode/Decode
       toolJsonFormatter: 'JSON Formatter',
       toolBase64String: 'Base64 String',
@@ -39,14 +77,14 @@
       toolHtmlEntity: 'HTML Entity',
       toolBackslash: 'Backslash Escape',
       toolJwt: 'JWT Debugger',
-      
+
       // Tool Names - Generators
       toolUuid: 'UUID Generator',
       toolHash: 'Hash Generator',
       toolPassword: 'Password Generator',
       toolLorem: 'Lorem Ipsum',
       toolQrcode: 'QR Code Generator',
-      
+
       // Tool Names - Converters
       toolUnixTime: 'Unix Time',
       toolNumberBase: 'Number Base',
@@ -56,7 +94,7 @@
       toolCsvJson: 'CSV ↔ JSON',
       toolHexAscii: 'Hex ↔ ASCII',
       toolHtmlJsx: 'HTML → JSX',
-      
+
       // Tool Names - Text Tools
       toolDiff: 'Text Diff',
       toolRegex: 'RegExp Tester',
@@ -64,21 +102,21 @@
       toolHtmlPreview: 'HTML Preview',
       toolStringInspector: 'String Inspector',
       toolLineSort: 'Line Sort/Dedupe',
-      
+
       // Tool Names - Formatters
       toolHtmlFormat: 'HTML Formatter',
       toolCssFormat: 'CSS Formatter',
       toolJsFormat: 'JS Formatter',
       toolXmlFormat: 'XML Formatter',
       toolSqlFormat: 'SQL Formatter',
-      
+
       // Tool Names - Dev Tools
       toolCronParser: 'Cron Parser',
       toolCurlCode: 'cURL → Code',
       toolJsonCode: 'JSON → Code',
       toolCertDecoder: 'Cert Decoder',
       toolSvgCss: 'SVG → CSS',
-      
+
       // Common UI
       input: 'Input',
       output: 'Output',
@@ -99,7 +137,7 @@
       beautify: 'Beautify',
       compare: 'Compare',
       parse: 'Parse',
-      
+
       // Tool Headers & Descriptions
       jsonTitle: 'JSON Format / Validate',
       jsonDesc: 'Format, minify and validate JSON data',
@@ -173,7 +211,7 @@
       certDecoderDesc: 'Parse and view X.509 certificate information',
       svgCssTitle: 'SVG → CSS Background',
       svgCssDesc: 'Convert SVG to CSS background-image',
-      
+
       // Specific UI elements
       uploadImage: 'Upload Image:',
       imageToBase64: 'Image → Base64',
@@ -281,7 +319,7 @@
       htmlInput: 'HTML Input',
       jsxOutput: 'JSX Output',
       convertToJsx: 'Convert to JSX',
-      
+
       // Toast messages
       copiedToClipboard: 'Copied to clipboard',
       copyFailed: 'Copy failed',
@@ -366,7 +404,7 @@
       certFullParsingNote: 'Note: Full certificate parsing requires ASN.1 decoder library',
       enterValidSvg: 'Please enter valid SVG code',
       svgConvertedToCss: 'SVG converted to CSS',
-      
+
       // Cron descriptions
       cronEveryMinute: 'Every minute',
       cronEveryHourAt0: 'Every hour at minute 0',
@@ -378,7 +416,7 @@
       cronOn: 'on {day}',
       cronOnDay: 'on day {day} of the month',
       cronInMonth: 'in month {month}',
-      
+
       // URL parse results
       protocol: 'protocol',
       host: 'host',
@@ -392,14 +430,14 @@
       queryParams: 'queryParams',
       defaultPort: '(default)',
       none: '(none)',
-      
+
       // Cert decoder
       certType: 'Type',
       certFormat: 'Format',
       certRawData: 'Raw Data (Base64)',
       x509Cert: 'X.509 Certificate',
       pemFormat: 'PEM',
-      
+
       // Days of week
       sun: 'Sun',
       mon: 'Mon',
@@ -412,7 +450,7 @@
     zh: {
       // Search
       searchPlaceholder: '搜索工具...',
-      
+
       // Categories
       catEncodeDecode: '编码 / 解码',
       catGenerators: '生成器',
@@ -420,7 +458,7 @@
       catTextTools: '文本工具',
       catFormatters: '格式化工具',
       catDevTools: '开发工具',
-      
+
       // Tool Names - Encode/Decode
       toolJsonFormatter: 'JSON 格式化',
       toolBase64String: 'Base64 编解码',
@@ -429,14 +467,14 @@
       toolHtmlEntity: 'HTML 实体编解码',
       toolBackslash: '反斜杠转义',
       toolJwt: 'JWT 解析器',
-      
+
       // Tool Names - Generators
       toolUuid: 'UUID 生成器',
       toolHash: 'Hash 生成器',
       toolPassword: '随机密码生成',
       toolLorem: 'Lorem Ipsum',
       toolQrcode: 'QR Code 生成',
-      
+
       // Tool Names - Converters
       toolUnixTime: 'Unix 时间戳',
       toolNumberBase: '进制转换',
@@ -446,7 +484,7 @@
       toolCsvJson: 'CSV ↔ JSON',
       toolHexAscii: 'Hex ↔ ASCII',
       toolHtmlJsx: 'HTML → JSX',
-      
+
       // Tool Names - Text Tools
       toolDiff: '文本对比',
       toolRegex: '正则测试',
@@ -454,21 +492,21 @@
       toolHtmlPreview: 'HTML 预览',
       toolStringInspector: '字符串检查',
       toolLineSort: '行排序/去重',
-      
+
       // Tool Names - Formatters
       toolHtmlFormat: 'HTML 格式化',
       toolCssFormat: 'CSS 格式化',
       toolJsFormat: 'JS 格式化',
       toolXmlFormat: 'XML 格式化',
       toolSqlFormat: 'SQL 格式化',
-      
+
       // Tool Names - Dev Tools
       toolCronParser: 'Cron 表达式',
       toolCurlCode: 'cURL → 代码',
       toolJsonCode: 'JSON → 代码',
       toolCertDecoder: '证书解析',
       toolSvgCss: 'SVG → CSS',
-      
+
       // Common UI
       input: '输入',
       output: '输出',
@@ -489,7 +527,7 @@
       beautify: '格式化',
       compare: '对比',
       parse: '解析',
-      
+
       // Tool Headers & Descriptions
       jsonTitle: 'JSON 格式化 / 验证',
       jsonDesc: '格式化、压缩和验证 JSON 数据',
@@ -563,7 +601,7 @@
       certDecoderDesc: '解析和查看 X.509 证书信息',
       svgCssTitle: 'SVG → CSS 背景',
       svgCssDesc: '将 SVG 转换为 CSS background-image',
-      
+
       // Specific UI elements
       uploadImage: '上传图片:',
       imageToBase64: '图片 → Base64',
@@ -671,7 +709,7 @@
       htmlInput: 'HTML 输入',
       jsxOutput: 'JSX 输出',
       convertToJsx: '转换为 JSX',
-      
+
       // Toast messages
       copiedToClipboard: '已复制到剪贴板',
       copyFailed: '复制失败',
@@ -756,7 +794,7 @@
       certFullParsingNote: '注: 完整的证书解析需要 ASN.1 解码库支持',
       enterValidSvg: '请输入有效的 SVG 代码',
       svgConvertedToCss: 'SVG 已转换为 CSS',
-      
+
       // Cron descriptions
       cronEveryMinute: '每分钟执行',
       cronEveryHourAt0: '每小时整点',
@@ -768,7 +806,7 @@
       cronOn: '周{day}',
       cronOnDay: '每月第 {day} 天',
       cronInMonth: '{month} 月',
-      
+
       // URL parse results
       protocol: '协议',
       host: '主机',
@@ -782,14 +820,14 @@
       queryParams: '查询参数',
       defaultPort: '(默认)',
       none: '(无)',
-      
+
       // Cert decoder
       certType: '类型',
       certFormat: '格式',
       certRawData: '原始数据 (Base64)',
       x509Cert: 'X.509 证书',
       pemFormat: 'PEM',
-      
+
       // Days of week
       sun: '日',
       mon: '一',
@@ -800,7 +838,7 @@
       sat: '六'
     }
   };
-  
+
   function t(key, replacements = {}) {
     let text = translations[currentLang][key] || translations['en'][key] || key;
     for (const [k, v] of Object.entries(replacements)) {
@@ -808,7 +846,7 @@
     }
     return text;
   }
-  
+
   function detectLanguage() {
     const saved = localStorage.getItem('lang');
     if (saved && (saved === 'en' || saved === 'zh')) {
@@ -820,33 +858,33 @@
     }
     return 'en';
   }
-  
+
   function setLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('lang', lang);
     updateLanguageUI();
     updateAllTranslations();
   }
-  
+
   function updateLanguageUI() {
     const langBtn = $('#langToggle .lang-text');
     if (langBtn) {
       langBtn.textContent = currentLang === 'en' ? 'EN' : '中';
     }
   }
-  
+
   function updateAllTranslations() {
     // Update search placeholder
     const searchInput = $('#toolSearch');
     if (searchInput) searchInput.placeholder = t('searchPlaceholder');
-    
+
     // Update category titles
     const categoryTitles = $$('.category-title');
     const categories = ['catEncodeDecode', 'catGenerators', 'catConverters', 'catTextTools', 'catFormatters', 'catDevTools'];
     categoryTitles.forEach((el, i) => {
       if (categories[i]) el.textContent = t(categories[i]);
     });
-    
+
     // Update tool names in sidebar
     const toolNameMap = {
       'json': 'toolJsonFormatter',
@@ -886,7 +924,7 @@
       'cert-decoder': 'toolCertDecoder',
       'svg-css': 'toolSvgCss'
     };
-    
+
     $$('.tool-item').forEach(item => {
       const toolId = item.dataset.tool;
       const key = toolNameMap[toolId];
@@ -895,7 +933,7 @@
         if (nameSpan) nameSpan.textContent = t(key);
       }
     });
-    
+
     // Update tool panel headers and descriptions
     const panelTitleMap = {
       'tool-json': ['jsonTitle', 'jsonDesc'],
@@ -935,7 +973,7 @@
       'tool-cert-decoder': ['certDecoderTitle', 'certDecoderDesc'],
       'tool-svg-css': ['svgCssTitle', 'svgCssDesc']
     };
-    
+
     for (const [panelId, [titleKey, descKey]] of Object.entries(panelTitleMap)) {
       const panel = $(`#${panelId}`);
       if (panel) {
@@ -945,7 +983,7 @@
         if (desc) desc.textContent = t(descKey);
       }
     }
-    
+
     // Update buttons (common ones with IDs)
     updateButtonText('jsonFormat', 'format');
     updateButtonText('jsonMinify', 'minify');
@@ -1000,173 +1038,173 @@
     updateButtonText('convertJsonCode', 'convert');
     updateButtonText('decodeCert', 'decodeCert');
     updateButtonText('convertSvgCss', 'convertToCss');
-    
+
     // Update editor headers
     updateEditorHeaders();
-    
+
     // Update specific labels
     updateLabels();
   }
-  
+
   function updateButtonText(btnId, key) {
     const btn = $(`#${btnId}`);
     if (btn) btn.textContent = t(key);
   }
-  
+
   function updateEditorHeaders() {
     // JSON tool
     updateEditorHeader('#tool-json .editor-container:first-of-type .editor-header span:first-child', 'inputJson');
     updateEditorHeader('#tool-json .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // Base64 tool
     updateEditorHeader('#tool-base64 .editor-container:first-of-type .editor-header span:first-child', 'inputText');
     updateEditorHeader('#tool-base64 .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // URL tool
     updateEditorHeader('#tool-url .editor-container:first-of-type .editor-header span:first-child', 'inputUrl');
     updateEditorHeader('#tool-url .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // HTML Entity tool
     updateEditorHeader('#tool-html-entity .editor-container:first-of-type .editor-header span:first-child', 'inputText');
     updateEditorHeader('#tool-html-entity .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // JWT tool
     updateEditorHeader('#tool-jwt .editor-container .editor-header span:first-child', 'jwtToken');
-    
+
     // Hash tool
     updateEditorHeader('#tool-hash .editor-container .editor-header span:first-child', 'inputText');
-    
+
     // UUID tool
     updateEditorHeader('#tool-uuid .editor-container .editor-header span:first-child', 'generated');
-    
+
     // Password tool
     updateEditorHeader('#tool-password .editor-container .editor-header span:first-child', 'generated');
-    
+
     // Lorem tool
     updateEditorHeader('#tool-lorem .editor-container .editor-header span:first-child', 'generated');
-    
+
     // Base64 Image tool
     updateEditorHeader('#tool-base64-image .editor-container .editor-header span:first-child', 'base64String');
     updateEditorHeader('#tool-base64-image .image-preview-container .editor-header span:first-child', 'imagePreview');
-    
+
     // Backslash tool
     updateEditorHeader('#tool-backslash .editor-container:first-of-type .editor-header span:first-child', 'inputText');
     updateEditorHeader('#tool-backslash .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // QR Code tool
     updateEditorHeader('#tool-qrcode .editor-container .editor-header span:first-child', 'inputContent');
     updateEditorHeader('#tool-qrcode .qrcode-preview-container .editor-header span:first-child', 'qrCodePreview');
-    
+
     // YAML/JSON tool
     updateEditorHeader('#tool-yaml-json .editor-container:first-of-type .editor-header span:first-child', 'input');
     updateEditorHeader('#tool-yaml-json .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // CSV/JSON tool
     updateEditorHeader('#tool-csv-json .editor-container:first-of-type .editor-header span:first-child', 'input');
     updateEditorHeader('#tool-csv-json .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // Hex/ASCII tool
     updateEditorHeader('#tool-hex-ascii .editor-container:first-of-type .editor-header span:first-child', 'input');
     updateEditorHeader('#tool-hex-ascii .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // HTML to JSX tool
     updateEditorHeader('#tool-html-jsx .editor-container:first-of-type .editor-header span:first-child', 'htmlInput');
     updateEditorHeader('#tool-html-jsx .editor-container:last-of-type .editor-header span:first-child', 'jsxOutput');
-    
+
     // Diff tool
     updateEditorHeader('#tool-diff .diff-inputs .editor-container:first-of-type .editor-header span:first-child', 'originalText');
     updateEditorHeader('#tool-diff .diff-inputs .editor-container:last-of-type .editor-header span:first-child', 'compareText');
     updateEditorHeader('#tool-diff > .tool-body > .editor-container:last-of-type .editor-header span:first-child', 'diffResult');
-    
+
     // Regex tool
     updateEditorHeader('#tool-regex .editor-container .editor-header span:first-child', 'testString');
-    
+
     // Markdown tool
     updateEditorHeader('#tool-markdown .editor-container:first-of-type .editor-header span:first-child', 'markdownInput');
     updateEditorHeader('#tool-markdown .editor-container:last-of-type .editor-header span:first-child', 'preview');
-    
+
     // HTML Preview tool
     updateEditorHeader('#tool-html-preview .editor-container:first-of-type .editor-header span:first-child', 'htmlCode');
     updateEditorHeader('#tool-html-preview .editor-container:last-of-type .editor-header span:first-child', 'preview');
-    
+
     // String Inspector tool
     updateEditorHeader('#tool-string-inspector .editor-container:first-of-type .editor-header span:first-child', 'inputString');
     updateEditorHeader('#tool-string-inspector .editor-container:last-of-type .editor-header span:first-child', 'charDetailsUnicode');
-    
+
     // Line Sort tool
     updateEditorHeader('#tool-line-sort .editor-container:first-of-type .editor-header span:first-child', 'inputText');
     updateEditorHeader('#tool-line-sort .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // HTML Format tool
     updateEditorHeader('#tool-html-format .editor-container:first-of-type .editor-header span:first-child', 'inputHtml');
     updateEditorHeader('#tool-html-format .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // CSS Format tool
     updateEditorHeader('#tool-css-format .editor-container:first-of-type .editor-header span:first-child', 'inputCss');
     updateEditorHeader('#tool-css-format .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // JS Format tool
     updateEditorHeader('#tool-js-format .editor-container:first-of-type .editor-header span:first-child', 'inputJs');
     updateEditorHeader('#tool-js-format .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // XML Format tool
     updateEditorHeader('#tool-xml-format .editor-container:first-of-type .editor-header span:first-child', 'inputXml');
     updateEditorHeader('#tool-xml-format .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // SQL Format tool
     updateEditorHeader('#tool-sql-format .editor-container:first-of-type .editor-header span:first-child', 'inputSql');
     updateEditorHeader('#tool-sql-format .editor-container:last-of-type .editor-header span:first-child', 'output');
-    
+
     // Cron Parser tool
     updateEditorHeader('#tool-cron-parser .cron-input-section .editor-header span:first-child', 'cronExpression');
-    
+
     // cURL to Code tool
     updateEditorHeader('#tool-curl-code .editor-container:first-of-type .editor-header span:first-child', 'curlCommand');
     updateEditorHeader('#tool-curl-code .editor-container:last-of-type .editor-header span:first-child', 'generatedCode');
-    
+
     // JSON to Code tool
     updateEditorHeader('#tool-json-code .editor-container:first-of-type .editor-header span:first-child', 'jsonInput');
     updateEditorHeader('#tool-json-code .editor-container:last-of-type .editor-header span:first-child', 'generatedCode');
-    
+
     // Cert Decoder tool
     updateEditorHeader('#tool-cert-decoder .editor-container .editor-header span:first-child', 'certPem');
-    
+
     // SVG to CSS tool
     updateEditorHeader('#tool-svg-css .editor-container:first-of-type .editor-header span:first-child', 'svgCode');
     updateEditorHeader('#tool-svg-css .editor-container:nth-of-type(2) .editor-header span:first-child', 'cssOutput');
     updateEditorHeader('#tool-svg-css .svg-preview-container .editor-header span:first-child', 'preview');
   }
-  
+
   function updateEditorHeader(selector, key) {
     const el = $(selector);
     if (el) el.textContent = t(key);
   }
-  
+
   function updateLabels() {
     // Unix Time labels
     const currentTsLabel = $('#tool-unix-time .current-time-display span:first-child');
     if (currentTsLabel) currentTsLabel.textContent = t('currentTimestamp');
-    
+
     const ts2dateH3 = $('#tool-unix-time .converter-section:first-child h3');
     if (ts2dateH3) ts2dateH3.textContent = t('timestampToDate');
-    
+
     const date2tsH3 = $('#tool-unix-time .converter-section:last-child h3');
     if (date2tsH3) date2tsH3.textContent = t('dateToTimestamp');
-    
+
     // Number base labels
     const baseLabels = $$('#tool-number-base .base-input-group label');
     const baseKeys = ['binary', 'octal', 'decimal', 'hexadecimal'];
     baseLabels.forEach((el, i) => {
       if (baseKeys[i]) el.textContent = t(baseKeys[i]);
     });
-    
+
     // String inspector labels
     const statLabels = $$('#tool-string-inspector .stat-item label');
     const statKeys = ['characters', 'charsNoSpace', 'wordsCount', 'lines', 'bytesUtf8', 'paragraphsCount'];
     statLabels.forEach((el, i) => {
       if (statKeys[i]) el.textContent = t(statKeys[i]);
     });
-    
+
     // Regex matches label
     const matchLabel = $('#tool-regex .regex-info span');
     if (matchLabel) {
@@ -1174,11 +1212,11 @@
       const count = strong ? strong.textContent : '0';
       matchLabel.innerHTML = `${t('matches')} <strong id="matchCount">${count}</strong>`;
     }
-    
+
     // Cron help
     const cronFormatH4 = $('#tool-cron-parser .cron-help h4');
     if (cronFormatH4) cronFormatH4.textContent = t('cronFormat');
-    
+
     // Update cron examples
     const cronExamples = $$('#tool-cron-parser .cron-examples .example');
     const cronExampleTexts = ['everyMinute', 'everyHour', 'everyDayMidnight', 'weekdaysAt9', 'every15Minutes'];
@@ -1192,14 +1230,14 @@
         }
       }
     });
-    
+
     // Description label in cron
     const cronDescLabel = $('#tool-cron-parser .cron-description label');
     if (cronDescLabel) cronDescLabel.textContent = t('description');
-    
+
     const cronNextLabel = $('#tool-cron-parser .cron-next-runs label');
     if (cronNextLabel) cronNextLabel.textContent = t('nextExecutions');
-    
+
     // Target language labels
     const targetLangLabels = $$('.option-group label');
     targetLangLabels.forEach(label => {
@@ -1212,7 +1250,7 @@
       if (text === 'Size:' || text === '尺寸:') label.textContent = t('size');
       if (text === 'Upload Image:' || text === '上传图片:') label.textContent = t('uploadImage');
     });
-    
+
     // Checkbox labels
     const checkboxLabels = $$('.checkbox-label');
     checkboxLabels.forEach(label => {
@@ -1254,7 +1292,7 @@
         label.appendChild(document.createTextNode(' ' + t('symbolsSpecial')));
       }
     });
-    
+
     // Select options for lorem type
     const loremTypeSelect = $('#loremType');
     if (loremTypeSelect) {
@@ -1265,7 +1303,7 @@
         if (opt.value === 'words') opt.textContent = t('words');
       });
     }
-    
+
     // Select options for timestamp unit
     const tsUnitSelect = $('#timestampUnit');
     if (tsUnitSelect) {
@@ -1275,26 +1313,26 @@
         if (opt.value === 'ms') opt.textContent = t('milliseconds');
       });
     }
-    
+
     // Unix time result labels
     const localTimeLabel = $('#tool-unix-time .result-item:nth-child(1) label');
     if (localTimeLabel) localTimeLabel.textContent = t('localTime');
-    
+
     const utcTimeLabel = $('#tool-unix-time .result-item:nth-child(2) label');
     if (utcTimeLabel) utcTimeLabel.textContent = t('utcTime');
   }
-  
+
   function initLanguage() {
     currentLang = detectLanguage();
     updateLanguageUI();
     updateAllTranslations();
-    
+
     $('#langToggle').addEventListener('click', () => {
       const newLang = currentLang === 'en' ? 'zh' : 'en';
       setLanguage(newLang);
     });
   }
-  
+
   function showToast(message, type = 'info') {
     const toast = $('#toast');
     toast.textContent = message;
@@ -1303,7 +1341,7 @@
       toast.classList.remove('show');
     }, 3000);
   }
-  
+
   async function copyToClipboard(text) {
     try {
       await navigator.clipboard.writeText(text);
@@ -1312,7 +1350,7 @@
       showToast(t('copyFailed'), 'error');
     }
   }
-  
+
   async function pasteFromClipboard() {
     try {
       return await navigator.clipboard.readText();
@@ -1325,11 +1363,11 @@
   // ========================================
   // Theme Management
   // ========================================
-  
+
   function initTheme() {
     const saved = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', saved);
-    
+
     $('#themeToggle').addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme');
       const next = current === 'dark' ? 'light' : 'dark';
@@ -1341,24 +1379,24 @@
   // ========================================
   // Navigation
   // ========================================
-  
+
   function initNavigation() {
     const toolItems = $$('.tool-item');
     const toolPanels = $$('.tool-panel');
-    
+
     toolItems.forEach(item => {
       item.addEventListener('click', () => {
         const toolId = item.dataset.tool;
-        
+
         // Update active states
         toolItems.forEach(i => i.classList.remove('active'));
         item.classList.add('active');
-        
+
         toolPanels.forEach(p => p.classList.remove('active'));
         $(`#tool-${toolId}`).classList.add('active');
       });
     });
-    
+
     // Search functionality
     const searchInput = $('#toolSearch');
     searchInput.addEventListener('input', (e) => {
@@ -1373,30 +1411,50 @@
   // ========================================
   // Common Editor Actions
   // ========================================
-  
+
   function initEditorActions() {
     document.addEventListener('click', async (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
-      
+
       const action = btn.dataset.action;
       const container = btn.closest('.editor-container');
       const textarea = container.querySelector('textarea');
-      
-      if (action === 'copy' && textarea) {
-        await copyToClipboard(textarea.value);
+
+      if (action === 'copy') {
+        // 优先尝试从textarea复制
+        if (textarea) {
+          await copyToClipboard(textarea.value);
+        } else {
+          // 检查是否是JSON树状输出
+          const jsonTreeOutput = container.querySelector('#jsonTreeOutput');
+          if (jsonTreeOutput) {
+            try {
+              const savedOutput = localStorage.getItem('devtools_json_output');
+              if (savedOutput) {
+                const parsed = JSON.parse(savedOutput);
+                const formatted = JSON.stringify(parsed, null, 2);
+                await copyToClipboard(formatted);
+              } else {
+                showToast(t('enterContent'), 'error');
+              }
+            } catch (err) {
+              showToast(t('copyFailed'), 'error');
+            }
+          }
+        }
       } else if (action === 'paste' && textarea) {
         textarea.value = await pasteFromClipboard();
       } else if (action === 'clear' && textarea) {
         textarea.value = '';
       }
     });
-    
+
     // Copy buttons for hash values
     document.addEventListener('click', async (e) => {
       const btn = e.target.closest('.btn-copy');
       if (!btn) return;
-      
+
       const targetId = btn.dataset.target;
       const input = $(`#${targetId}`);
       if (input) {
@@ -1408,37 +1466,73 @@
   // ========================================
   // JSON Tool
   // ========================================
-  
+
   function initJsonTool() {
     const input = $('#jsonInput');
     const output = $('#jsonOutput');
     const status = $('#jsonStatus');
-    
+    const jsonTreeOutput = $('#jsonTreeOutput');
+
+    // Enable auto-save for JSON input
+    enableAutoSave('#jsonInput', 'devtools_json_input');
+
     function updateStatus(message, type) {
       status.textContent = message;
       status.className = `status-bar ${type}`;
     }
-    
+
+    // Render JSON tree view
+    function renderJsonTree(container, data) {
+      container.innerHTML = '';
+      var rootNode = createJsonNode(data, 'root', true);
+      container.appendChild(rootNode);
+    }
+
+    // Restore saved JSON output on load
+    try {
+      const savedOutput = localStorage.getItem('devtools_json_output');
+      if (savedOutput) {
+        const parsed = JSON.parse(savedOutput);
+        renderJsonTree(jsonTreeOutput, parsed);
+      }
+    } catch (e) {
+      console.error('Failed to restore JSON output:', e);
+    }
+
     $('#jsonFormat').addEventListener('click', () => {
       try {
         const parsed = JSON.parse(input.value);
-        output.value = JSON.stringify(parsed, null, 2);
+        // Render tree view directly
+        renderJsonTree(jsonTreeOutput, parsed);
+        // Save output to localStorage
+        try {
+          localStorage.setItem('devtools_json_output', JSON.stringify(parsed));
+        } catch (e) {
+          console.error('Failed to save JSON output:', e);
+        }
         updateStatus(t('jsonFormatted'), 'success');
       } catch (err) {
         updateStatus(`${t('error')}: ${err.message}`, 'error');
       }
     });
-    
+
     $('#jsonMinify').addEventListener('click', () => {
       try {
         const parsed = JSON.parse(input.value);
-        output.value = JSON.stringify(parsed);
+        // Show minified JSON in tree view
+        renderJsonTree(jsonTreeOutput, parsed);
+        // Save output to localStorage
+        try {
+          localStorage.setItem('devtools_json_output', JSON.stringify(parsed));
+        } catch (e) {
+          console.error('Failed to save JSON output:', e);
+        }
         updateStatus(t('jsonMinified'), 'success');
       } catch (err) {
         updateStatus(`${t('error')}: ${err.message}`, 'error');
       }
     });
-    
+
     $('#jsonValidate').addEventListener('click', () => {
       try {
         JSON.parse(input.value);
@@ -1447,28 +1541,164 @@
         updateStatus(`${t('invalidJson')}: ${err.message}`, 'error');
       }
     });
+
+    function createJsonNode(value, key, isRoot) {
+      var node = document.createElement('div');
+      node.className = isRoot ? 'json-tree-node root' : 'json-tree-node';
+
+      var line = document.createElement('div');
+      line.className = 'json-tree-line';
+
+      if (value !== null && typeof value === 'object') {
+        var isArray = Array.isArray(value);
+        var keys = Object.keys(value);
+        var isEmpty = keys.length === 0;
+
+        // Toggle button
+        var toggle = document.createElement('span');
+        toggle.className = isEmpty ? 'json-toggle empty' : 'json-toggle expanded';
+        if (!isEmpty) {
+          toggle.onclick = function () {
+            if (node.classList.contains('collapsed')) {
+              node.classList.remove('collapsed');
+              toggle.classList.remove('collapsed');
+              toggle.classList.add('expanded');
+            } else {
+              node.classList.add('collapsed');
+              toggle.classList.remove('expanded');
+              toggle.classList.add('collapsed');
+            }
+          };
+        }
+        line.appendChild(toggle);
+
+        // Key
+        if (!isRoot) {
+          var keySpan = document.createElement('span');
+          keySpan.className = 'json-key';
+          keySpan.textContent = '"' + key + '"';
+          line.appendChild(keySpan);
+
+          var separator = document.createElement('span');
+          separator.className = 'json-separator';
+          separator.textContent = ':';
+          line.appendChild(separator);
+        }
+
+        // Opening bracket
+        var openBracket = document.createElement('span');
+        openBracket.className = 'json-bracket';
+        openBracket.textContent = isArray ? '[' : '{';
+        line.appendChild(openBracket);
+
+        if (!isEmpty) {
+          // Count
+          var count = document.createElement('span');
+          count.className = 'json-count';
+          count.textContent = '(' + keys.length + (isArray ? ' items' : ' properties') + ')';
+          line.appendChild(count);
+        }
+
+        node.appendChild(line);
+
+        // Children
+        if (!isEmpty) {
+          keys.forEach(function (childKey, index) {
+            var childNode = createJsonNode(value[childKey], childKey, false);
+            node.appendChild(childNode);
+          });
+
+          // Closing bracket line
+          var closeLine = document.createElement('div');
+          closeLine.className = 'json-tree-line';
+          closeLine.innerHTML = '<span class="json-toggle empty"></span><span class="json-bracket">' +
+            (isArray ? ']' : '}') + '</span>';
+          node.appendChild(closeLine);
+        } else {
+          // Empty object/array - add closing bracket inline
+          var closeBracket = document.createElement('span');
+          closeBracket.className = 'json-bracket';
+          closeBracket.textContent = isArray ? ']' : '}';
+          line.appendChild(closeBracket);
+        }
+      } else {
+        // Primitive value
+        var emptyToggle = document.createElement('span');
+        emptyToggle.className = 'json-toggle empty';
+        line.appendChild(emptyToggle);
+
+        if (!isRoot) {
+          var keySpan = document.createElement('span');
+          keySpan.className = 'json-key';
+          keySpan.textContent = '"' + key + '"';
+          line.appendChild(keySpan);
+
+          var separator = document.createElement('span');
+          separator.className = 'json-separator';
+          separator.textContent = ':';
+          line.appendChild(separator);
+        }
+
+        var valueSpan = document.createElement('span');
+        valueSpan.className = 'json-value';
+
+        if (value === null) {
+          valueSpan.classList.add('null');
+          valueSpan.textContent = 'null';
+        } else if (typeof value === 'string') {
+          valueSpan.classList.add('string');
+          valueSpan.textContent = '"' + value + '"';
+        } else if (typeof value === 'number') {
+          valueSpan.classList.add('number');
+          valueSpan.textContent = value;
+        } else if (typeof value === 'boolean') {
+          valueSpan.classList.add('boolean');
+          valueSpan.textContent = value;
+        }
+
+        line.appendChild(valueSpan);
+        node.appendChild(line);
+      }
+
+      return node;
+    }
   }
 
   // ========================================
   // Base64 Tool
   // ========================================
-  
+
   function initBase64Tool() {
     const input = $('#base64Input');
     const output = $('#base64Output');
-    
+
+    // Enable auto-save for Base64 input
+    enableAutoSave('#base64Input', 'devtools_base64_input');
+
     $('#base64Encode').addEventListener('click', () => {
       try {
         output.value = btoa(unescape(encodeURIComponent(input.value)));
+        // Save output to localStorage
+        try {
+          localStorage.setItem('devtools_base64_output', output.value);
+        } catch (e) {
+          console.error('Failed to save Base64 output:', e);
+        }
         showToast(t('encodedSuccess'), 'success');
       } catch (err) {
         showToast(t('encodingFailed') + ': ' + err.message, 'error');
       }
     });
-    
+
     $('#base64Decode').addEventListener('click', () => {
       try {
         output.value = decodeURIComponent(escape(atob(input.value)));
+        // Save output to localStorage
+        try {
+          localStorage.setItem('devtools_base64_output', output.value);
+        } catch (e) {
+          console.error('Failed to save Base64 output:', e);
+        }
         showToast(t('decodedSuccess'), 'success');
       } catch (err) {
         showToast(t('decodingFailed') + ': ' + t('invalidBase64'), 'error');
@@ -1479,25 +1709,40 @@
   // ========================================
   // URL Tool
   // ========================================
-  
+
   function initUrlTool() {
     const input = $('#urlInput');
     const output = $('#urlOutput');
-    
+
+    // Enable auto-save for URL input
+    enableAutoSave('#urlInput', 'devtools_url_input');
+
     $('#urlEncode').addEventListener('click', () => {
       output.value = encodeURIComponent(input.value);
+      // Save output to localStorage
+      try {
+        localStorage.setItem('devtools_url_output', output.value);
+      } catch (e) {
+        console.error('Failed to save URL output:', e);
+      }
       showToast(t('urlEncodedSuccess'), 'success');
     });
-    
+
     $('#urlDecode').addEventListener('click', () => {
       try {
         output.value = decodeURIComponent(input.value);
+        // Save output to localStorage
+        try {
+          localStorage.setItem('devtools_url_output', output.value);
+        } catch (e) {
+          console.error('Failed to save URL output:', e);
+        }
         showToast(t('urlDecodedSuccess'), 'success');
       } catch (err) {
         showToast(t('urlDecodingFailed'), 'error');
       }
     });
-    
+
     $('#urlParse').addEventListener('click', () => {
       try {
         const url = new URL(input.value);
@@ -1511,17 +1756,17 @@
         result[t('hash')] = url.hash;
         result[t('username')] = url.username || t('none');
         result[t('password')] = url.password || t('none');
-        
+
         // Parse query parameters
         const params = {};
         url.searchParams.forEach((value, key) => {
           params[key] = value;
         });
-        
+
         if (Object.keys(params).length > 0) {
           result[t('queryParams')] = params;
         }
-        
+
         output.value = JSON.stringify(result, null, 2);
         showToast(t('urlParsedSuccess'), 'success');
       } catch (err) {
@@ -1533,11 +1778,11 @@
   // ========================================
   // HTML Entity Tool
   // ========================================
-  
+
   function initHtmlEntityTool() {
     const input = $('#htmlEntityInput');
     const output = $('#htmlEntityOutput');
-    
+
     const htmlEntities = {
       '&': '&amp;',
       '<': '&lt;',
@@ -1545,12 +1790,12 @@
       '"': '&quot;',
       "'": '&#39;'
     };
-    
+
     $('#htmlEntityEncode').addEventListener('click', () => {
       output.value = input.value.replace(/[&<>"']/g, char => htmlEntities[char]);
       showToast(t('htmlEntitiesEncoded'), 'success');
     });
-    
+
     $('#htmlEntityDecode').addEventListener('click', () => {
       const textarea = document.createElement('textarea');
       textarea.innerHTML = input.value;
@@ -1562,10 +1807,10 @@
   // ========================================
   // JWT Tool
   // ========================================
-  
+
   function initJwtTool() {
     const input = $('#jwtInput');
-    
+
     function base64UrlDecode(str) {
       str = str.replace(/-/g, '+').replace(/_/g, '/');
       const pad = str.length % 4;
@@ -1574,23 +1819,23 @@
       }
       return decodeURIComponent(escape(atob(str)));
     }
-    
+
     $('#jwtDecode').addEventListener('click', () => {
       try {
         const token = input.value.trim();
         const parts = token.split('.');
-        
+
         if (parts.length !== 3) {
           throw new Error(t('invalidJwtFormat'));
         }
-        
+
         const header = JSON.parse(base64UrlDecode(parts[0]));
         const payload = JSON.parse(base64UrlDecode(parts[1]));
-        
+
         $('#jwtHeader').textContent = JSON.stringify(header, null, 2);
         $('#jwtPayload').textContent = JSON.stringify(payload, null, 2);
         $('#jwtSignature').textContent = parts[2];
-        
+
         showToast(t('jwtDecodedSuccess'), 'success');
       } catch (err) {
         showToast(t('jwtDecodingFailed') + ': ' + err.message, 'error');
@@ -1601,10 +1846,10 @@
   // ========================================
   // UUID Tool
   // ========================================
-  
+
   function initUuidTool() {
     const output = $('#uuidOutput');
-    
+
     function generateUUIDv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
         const r = Math.random() * 16 | 0;
@@ -1612,32 +1857,32 @@
         return v.toString(16);
       });
     }
-    
+
     function generateULID() {
       const ENCODING = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
       const TIME_LEN = 10;
       const RANDOM_LEN = 16;
-      
+
       let time = Date.now();
       let timeStr = '';
       for (let i = TIME_LEN; i > 0; i--) {
         timeStr = ENCODING[time % 32] + timeStr;
         time = Math.floor(time / 32);
       }
-      
+
       let randomStr = '';
       for (let i = 0; i < RANDOM_LEN; i++) {
         randomStr += ENCODING[Math.floor(Math.random() * 32)];
       }
-      
+
       return timeStr + randomStr;
     }
-    
+
     $('#generateUUID').addEventListener('click', () => {
       const count = parseInt($('#uuidCount').value) || 5;
       const uppercase = $('#uuidUppercase').checked;
       const noDash = $('#uuidNoDash').checked;
-      
+
       const uuids = [];
       for (let i = 0; i < count; i++) {
         let uuid = generateUUIDv4();
@@ -1645,22 +1890,22 @@
         if (uppercase) uuid = uuid.toUpperCase();
         uuids.push(uuid);
       }
-      
+
       output.value = uuids.join('\n');
       showToast(t('generatedUuids', { count }), 'success');
     });
-    
+
     $('#generateULID').addEventListener('click', () => {
       const count = parseInt($('#uuidCount').value) || 5;
       const uppercase = $('#uuidUppercase').checked;
-      
+
       const ulids = [];
       for (let i = 0; i < count; i++) {
         let ulid = generateULID();
         if (!uppercase) ulid = ulid.toLowerCase();
         ulids.push(ulid);
       }
-      
+
       output.value = ulids.join('\n');
       showToast(t('generatedUlids', { count }), 'success');
     });
@@ -1669,25 +1914,28 @@
   // ========================================
   // Hash Tool
   // ========================================
-  
+
   function initHashTool() {
     const input = $('#hashInput');
-    
+
+    // Enable auto-save for Hash input
+    enableAutoSave('#hashInput', 'devtools_hash_input');
+
     async function sha(algorithm, message) {
       const msgBuffer = new TextEncoder().encode(message);
       const hashBuffer = await crypto.subtle.digest(algorithm, msgBuffer);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
-    
+
     $('#generateHash').addEventListener('click', async () => {
       const text = input.value;
-      
+
       if (!text) {
         showToast(t('enterTextToHash'), 'error');
         return;
       }
-      
+
       try {
         // MD5 (using external library)
         if (typeof md5 !== 'undefined') {
@@ -1695,16 +1943,16 @@
         } else {
           $('#hashMD5').value = t('md5LibNotLoaded');
         }
-        
+
         // SHA-1
         $('#hashSHA1').value = await sha('SHA-1', text);
-        
+
         // SHA-256
         $('#hashSHA256').value = await sha('SHA-256', text);
-        
+
         // SHA-512
         $('#hashSHA512').value = await sha('SHA-512', text);
-        
+
         showToast(t('hashesGenerated'), 'success');
       } catch (err) {
         showToast(t('hashGenerationFailed') + ': ' + err.message, 'error');
@@ -1715,25 +1963,25 @@
   // ========================================
   // Password Generator Tool
   // ========================================
-  
+
   function initPasswordTool() {
     const output = $('#passwordOutput');
-    
+
     $('#generatePassword').addEventListener('click', () => {
       const length = parseInt($('#passwordLength').value) || 16;
       const count = parseInt($('#passwordCount').value) || 5;
-      
+
       let chars = '';
       if ($('#pwdUppercase').checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       if ($('#pwdLowercase').checked) chars += 'abcdefghijklmnopqrstuvwxyz';
       if ($('#pwdNumbers').checked) chars += '0123456789';
       if ($('#pwdSymbols').checked) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-      
+
       if (!chars) {
         showToast(t('selectCharType'), 'error');
         return;
       }
-      
+
       const passwords = [];
       for (let i = 0; i < count; i++) {
         let password = '';
@@ -1744,7 +1992,7 @@
         }
         passwords.push(password);
       }
-      
+
       output.value = passwords.join('\n');
       showToast(t('generatedPasswords', { count }), 'success');
     });
@@ -1753,10 +2001,10 @@
   // ========================================
   // Lorem Ipsum Tool
   // ========================================
-  
+
   function initLoremTool() {
     const output = $('#loremOutput');
-    
+
     const loremWords = [
       'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
       'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
@@ -1767,11 +2015,11 @@
       'occaecat', 'cupidatat', 'non', 'proident', 'sunt', 'culpa', 'qui', 'officia',
       'deserunt', 'mollit', 'anim', 'id', 'est', 'laborum'
     ];
-    
+
     function randomWord() {
       return loremWords[Math.floor(Math.random() * loremWords.length)];
     }
-    
+
     function generateSentence() {
       const length = Math.floor(Math.random() * 10) + 5;
       const words = [];
@@ -1781,7 +2029,7 @@
       words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
       return words.join(' ') + '.';
     }
-    
+
     function generateParagraph() {
       const sentences = Math.floor(Math.random() * 4) + 3;
       const result = [];
@@ -1790,13 +2038,13 @@
       }
       return result.join(' ');
     }
-    
+
     $('#generateLorem').addEventListener('click', () => {
       const type = $('#loremType').value;
       const count = parseInt($('#loremCount').value) || 3;
-      
+
       let result = [];
-      
+
       if (type === 'words') {
         for (let i = 0; i < count; i++) {
           result.push(randomWord());
@@ -1813,7 +2061,7 @@
         }
         output.value = result.join('\n\n');
       }
-      
+
       showToast(t('loremGenerated'), 'success');
     });
   }
@@ -1821,59 +2069,59 @@
   // ========================================
   // Unix Time Tool
   // ========================================
-  
+
   function initUnixTimeTool() {
     const currentTimestamp = $('#currentTimestamp');
-    
+
     function updateCurrentTime() {
       currentTimestamp.textContent = Math.floor(Date.now() / 1000);
     }
-    
+
     updateCurrentTime();
     setInterval(updateCurrentTime, 1000);
-    
+
     $('#refreshTimestamp').addEventListener('click', updateCurrentTime);
-    
+
     $('#convertToDate').addEventListener('click', () => {
       let timestamp = parseInt($('#timestampInput').value);
       const unit = $('#timestampUnit').value;
-      
+
       if (isNaN(timestamp)) {
         showToast(t('enterValidTimestamp'), 'error');
         return;
       }
-      
+
       if (unit === 's') {
         timestamp *= 1000;
       }
-      
+
       const date = new Date(timestamp);
       const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
-      
+
       $('#localTime').textContent = date.toLocaleString(locale);
       $('#utcTime').textContent = date.toUTCString();
       $('#isoTime').textContent = date.toISOString();
-      
+
       showToast(t('convertedSuccess'), 'success');
     });
-    
+
     $('#convertToTimestamp').addEventListener('click', () => {
       const dateValue = $('#dateInput').value;
-      
+
       if (!dateValue) {
         showToast(t('selectDateTime'), 'error');
         return;
       }
-      
+
       const date = new Date(dateValue);
       const millis = date.getTime();
-      
+
       $('#resultSeconds').textContent = Math.floor(millis / 1000);
       $('#resultMillis').textContent = millis;
-      
+
       showToast(t('convertedSuccess'), 'success');
     });
-    
+
     // Set default date
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -1883,7 +2131,7 @@
   // ========================================
   // Number Base Converter Tool
   // ========================================
-  
+
   function initNumberBaseTool() {
     const inputs = {
       binary: $('#binaryInput'),
@@ -1891,13 +2139,13 @@
       decimal: $('#decimalInput'),
       hex: $('#hexInput')
     };
-    
+
     function updateAll(value, sourceBase) {
       const decimal = parseInt(value, sourceBase);
-      
+
       if (isNaN(decimal)) {
         Object.values(inputs).forEach(input => {
-          if (input !== inputs[Object.keys(inputs).find(k => 
+          if (input !== inputs[Object.keys(inputs).find(k =>
             (k === 'binary' && sourceBase === 2) ||
             (k === 'octal' && sourceBase === 8) ||
             (k === 'decimal' && sourceBase === 10) ||
@@ -1908,13 +2156,13 @@
         });
         return;
       }
-      
+
       if (sourceBase !== 2) inputs.binary.value = decimal.toString(2);
       if (sourceBase !== 8) inputs.octal.value = decimal.toString(8);
       if (sourceBase !== 10) inputs.decimal.value = decimal.toString(10);
       if (sourceBase !== 16) inputs.hex.value = decimal.toString(16).toUpperCase();
     }
-    
+
     inputs.binary.addEventListener('input', (e) => updateAll(e.target.value, 2));
     inputs.octal.addEventListener('input', (e) => updateAll(e.target.value, 8));
     inputs.decimal.addEventListener('input', (e) => updateAll(e.target.value, 10));
@@ -1924,7 +2172,7 @@
   // ========================================
   // Color Converter Tool
   // ========================================
-  
+
   function initColorTool() {
     const picker = $('#colorPicker');
     const preview = $('#colorPreview');
@@ -1932,7 +2180,7 @@
     const rgbInput = $('#colorRGB');
     const hslInput = $('#colorHSL');
     const rgbaInput = $('#colorRGBA');
-    
+
     function hexToRgb(hex) {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
@@ -1941,12 +2189,12 @@
         b: parseInt(result[3], 16)
       } : null;
     }
-    
+
     function rgbToHsl(r, g, b) {
       r /= 255; g /= 255; b /= 255;
       const max = Math.max(r, g, b), min = Math.min(r, g, b);
       let h, s, l = (max + min) / 2;
-      
+
       if (max === min) {
         h = s = 0;
       } else {
@@ -1958,20 +2206,20 @@
           case b: h = ((r - g) / d + 4) / 6; break;
         }
       }
-      
+
       return {
         h: Math.round(h * 360),
         s: Math.round(s * 100),
         l: Math.round(l * 100)
       };
     }
-    
+
     function updateColor(hex) {
       const rgb = hexToRgb(hex);
       if (!rgb) return;
-      
+
       const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-      
+
       picker.value = hex;
       preview.style.background = hex;
       hexInput.value = hex;
@@ -1979,15 +2227,15 @@
       hslInput.value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
       rgbaInput.value = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`;
     }
-    
+
     picker.addEventListener('input', (e) => updateColor(e.target.value));
-    
+
     hexInput.addEventListener('change', (e) => {
       let hex = e.target.value;
       if (!hex.startsWith('#')) hex = '#' + hex;
       updateColor(hex);
     });
-    
+
     // Initialize with default color
     updateColor('#6366f1');
   }
@@ -1995,15 +2243,15 @@
   // ========================================
   // Case Converter Tool
   // ========================================
-  
+
   function initCaseTool() {
     const input = $('#caseInput');
     const output = $('#caseOutput');
-    
+
     const converters = {
       upper: (s) => s.toUpperCase(),
       lower: (s) => s.toLowerCase(),
-      title: (s) => s.replace(/\w\S*/g, (txt) => 
+      title: (s) => s.replace(/\w\S*/g, (txt) =>
         txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       ),
       sentence: (s) => s.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, (c) => c.toUpperCase()),
@@ -2022,7 +2270,7 @@
         .replace(/([a-z])([A-Z])/g, '$1_$2')
         .toUpperCase()
     };
-    
+
     $$('.case-buttons .btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const caseType = btn.dataset.case;
@@ -2037,23 +2285,23 @@
   // ========================================
   // Diff Tool
   // ========================================
-  
+
   function initDiffTool() {
     const input1 = $('#diffInput1');
     const input2 = $('#diffInput2');
     const output = $('#diffOutput');
-    
+
     $('#compareDiff').addEventListener('click', () => {
       const lines1 = input1.value.split('\n');
       const lines2 = input2.value.split('\n');
-      
+
       let html = '';
       const maxLines = Math.max(lines1.length, lines2.length);
-      
+
       for (let i = 0; i < maxLines; i++) {
         const line1 = lines1[i] || '';
         const line2 = lines2[i] || '';
-        
+
         if (line1 === line2) {
           html += `<div class="diff-line diff-unchanged">${escapeHtml(line1) || '&nbsp;'}</div>`;
         } else {
@@ -2065,11 +2313,11 @@
           }
         }
       }
-      
+
       output.innerHTML = html;
       showToast(t('comparisonComplete'), 'success');
     });
-    
+
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
@@ -2080,31 +2328,35 @@
   // ========================================
   // Regex Tool
   // ========================================
-  
+
   function initRegexTool() {
     const patternInput = $('#regexPattern');
     const flagsInput = $('#regexFlags');
     const textInput = $('#regexInput');
     const matchCount = $('#matchCount');
     const matchesContainer = $('#regexMatches');
-    
+
+    // Enable auto-save for Regex inputs
+    enableAutoSave('#regexPattern', 'devtools_regex_pattern');
+    enableAutoSave('#regexInput', 'devtools_regex_input');
+
     function testRegex() {
       const pattern = patternInput.value;
       const flags = flagsInput.value;
       const text = textInput.value;
-      
+
       if (!pattern || !text) {
         matchCount.textContent = '0';
         matchesContainer.innerHTML = '';
         return;
       }
-      
+
       try {
         const regex = new RegExp(pattern, flags);
         const matches = [...text.matchAll(regex)];
-        
+
         matchCount.textContent = matches.length;
-        
+
         let html = '';
         matches.forEach((match, index) => {
           html += `
@@ -2115,19 +2367,19 @@
             </div>
           `;
         });
-        
+
         matchesContainer.innerHTML = html || `<div class="match-item">${t('noMatches')}</div>`;
       } catch (err) {
         matchesContainer.innerHTML = `<div class="match-item" style="color: var(--error)">${t('regexError')}: ${err.message}</div>`;
       }
     }
-    
+
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
     }
-    
+
     patternInput.addEventListener('input', testRegex);
     flagsInput.addEventListener('input', testRegex);
     textInput.addEventListener('input', testRegex);
@@ -2136,11 +2388,11 @@
   // ========================================
   // Markdown Tool
   // ========================================
-  
+
   function initMarkdownTool() {
     const input = $('#markdownInput');
     const preview = $('#markdownPreview');
-    
+
     function updatePreview() {
       if (typeof marked !== 'undefined') {
         preview.innerHTML = marked.parse(input.value);
@@ -2157,9 +2409,9 @@
         preview.innerHTML = html;
       }
     }
-    
+
     input.addEventListener('input', updatePreview);
-    
+
     // Initial render
     setTimeout(updatePreview, 100);
   }
@@ -2167,16 +2419,16 @@
   // ========================================
   // Base64 Image Tool
   // ========================================
-  
+
   function initBase64ImageTool() {
     const fileInput = $('#imageFileInput');
     const base64Input = $('#base64ImageInput');
     const preview = $('#imagePreview');
-    
+
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         base64Input.value = e.target.result;
@@ -2185,23 +2437,23 @@
       };
       reader.readAsDataURL(file);
     });
-    
+
     $('#imageToBase64').addEventListener('click', () => {
       fileInput.click();
     });
-    
+
     $('#base64ToImage').addEventListener('click', () => {
       const base64 = base64Input.value.trim();
       if (!base64) {
         showToast(t('enterBase64String'), 'error');
         return;
       }
-      
+
       let src = base64;
       if (!base64.startsWith('data:')) {
         src = 'data:image/png;base64,' + base64;
       }
-      
+
       const errorMsg = t('invalidBase64Image');
       preview.innerHTML = `<img src="${src}" alt="Preview" onerror="this.parentElement.innerHTML='${errorMsg}'">`;
       showToast(t('base64ConvertedToImage'), 'success');
@@ -2211,11 +2463,11 @@
   // ========================================
   // Backslash Escape Tool
   // ========================================
-  
+
   function initBackslashTool() {
     const input = $('#backslashInput');
     const output = $('#backslashOutput');
-    
+
     const escapeMap = {
       '\\': '\\\\',
       '\n': '\\n',
@@ -2224,7 +2476,7 @@
       '"': '\\"',
       "'": "\\'"
     };
-    
+
     const unescapeMap = {
       '\\\\': '\\',
       '\\n': '\n',
@@ -2233,12 +2485,12 @@
       '\\"': '"',
       "\\'": "'"
     };
-    
+
     $('#backslashEscape').addEventListener('click', () => {
       output.value = input.value.replace(/[\\\n\r\t"']/g, char => escapeMap[char] || char);
       showToast(t('escapedSuccess'), 'success');
     });
-    
+
     $('#backslashUnescape').addEventListener('click', () => {
       output.value = input.value.replace(/\\[\\nrt"']/g, seq => unescapeMap[seq] || seq);
       showToast(t('unescapedSuccess'), 'success');
@@ -2248,18 +2500,18 @@
   // ========================================
   // QR Code Tool
   // ========================================
-  
+
   function initQRCodeTool() {
     const input = $('#qrcodeInput');
     const preview = $('#qrcodePreview');
-    
+
     $('#generateQRCode').addEventListener('click', () => {
       const text = input.value.trim();
       if (!text) {
         showToast(t('enterContent'), 'error');
         return;
       }
-      
+
       const size = $('#qrcodeSize').value;
       // Using QR Server API to generate QR Code
       const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}`;
@@ -2271,30 +2523,30 @@
   // ========================================
   // YAML ↔ JSON Tool
   // ========================================
-  
+
   function initYamlJsonTool() {
     const input = $('#yamlJsonInput');
     const output = $('#yamlJsonOutput');
-    
+
     // Simple YAML parser (basic implementation)
     function parseYaml(yaml) {
       const lines = yaml.split('\n');
       const result = {};
       let currentIndent = 0;
       const stack = [result];
-      
+
       lines.forEach(line => {
         if (!line.trim() || line.trim().startsWith('#')) return;
-        
+
         const match = line.match(/^(\s*)([\w-]+):\s*(.*)$/);
         if (match) {
           const indent = match[1].length;
           const key = match[2];
           let value = match[3].trim();
-          
+
           // Handle string values with quotes
-          if ((value.startsWith('"') && value.endsWith('"')) || 
-              (value.startsWith("'") && value.endsWith("'"))) {
+          if ((value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))) {
             value = value.slice(1, -1);
           } else if (value === 'true') {
             value = true;
@@ -2305,21 +2557,21 @@
           } else if (!isNaN(value) && value !== '') {
             value = Number(value);
           }
-          
+
           stack[0][key] = value === '' ? {} : value;
           if (value === '' || typeof value === 'object') {
             stack.unshift(stack[0][key]);
           }
         }
       });
-      
+
       return result;
     }
-    
+
     function jsonToYaml(obj, indent = 0) {
       let yaml = '';
       const prefix = '  '.repeat(indent);
-      
+
       for (const [key, value] of Object.entries(obj)) {
         if (value === null) {
           yaml += `${prefix}${key}: null\n`;
@@ -2340,10 +2592,10 @@
           yaml += `${prefix}${key}: ${value}\n`;
         }
       }
-      
+
       return yaml;
     }
-    
+
     $('#yamlToJson').addEventListener('click', () => {
       try {
         const result = parseYaml(input.value);
@@ -2353,7 +2605,7 @@
         showToast(t('yamlParsingFailed') + ': ' + err.message, 'error');
       }
     });
-    
+
     $('#jsonToYaml').addEventListener('click', () => {
       try {
         const obj = JSON.parse(input.value);
@@ -2368,21 +2620,21 @@
   // ========================================
   // CSV ↔ JSON Tool
   // ========================================
-  
+
   function initCsvJsonTool() {
     const input = $('#csvJsonInput');
     const output = $('#csvJsonOutput');
-    
+
     $('#csvToJson').addEventListener('click', () => {
       try {
         const lines = input.value.trim().split('\n');
         if (lines.length < 2) {
           throw new Error(t('csvNeedsHeaderAndData'));
         }
-        
+
         const headers = lines[0].split(',').map(h => h.trim());
         const result = [];
-        
+
         for (let i = 1; i < lines.length; i++) {
           const values = lines[i].split(',');
           const obj = {};
@@ -2391,31 +2643,31 @@
           });
           result.push(obj);
         }
-        
+
         output.value = JSON.stringify(result, null, 2);
         showToast(t('csvToJsonSuccess'), 'success');
       } catch (err) {
         showToast(t('csvParsingFailed') + ': ' + err.message, 'error');
       }
     });
-    
+
     $('#jsonToCsv').addEventListener('click', () => {
       try {
         const data = JSON.parse(input.value);
         if (!Array.isArray(data) || data.length === 0) {
           throw new Error(t('jsonMustBeArray'));
         }
-        
+
         const headers = Object.keys(data[0]);
         let csv = headers.join(',') + '\n';
-        
+
         data.forEach(obj => {
           csv += headers.map(h => {
             const val = obj[h] ?? '';
             return typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
           }).join(',') + '\n';
         });
-        
+
         output.value = csv;
         showToast(t('jsonToCsvSuccess'), 'success');
       } catch (err) {
@@ -2427,11 +2679,11 @@
   // ========================================
   // Hex ↔ ASCII Tool
   // ========================================
-  
+
   function initHexAsciiTool() {
     const input = $('#hexAsciiInput');
     const output = $('#hexAsciiOutput');
-    
+
     $('#asciiToHex').addEventListener('click', () => {
       const hex = Array.from(input.value)
         .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
@@ -2439,7 +2691,7 @@
       output.value = hex.toUpperCase();
       showToast(t('asciiToHexSuccess'), 'success');
     });
-    
+
     $('#hexToAscii').addEventListener('click', () => {
       try {
         const hex = input.value.replace(/\s+/g, '');
@@ -2458,11 +2710,11 @@
   // ========================================
   // HTML → JSX Tool
   // ========================================
-  
+
   function initHtmlJsxTool() {
     const input = $('#htmlJsxInput');
     const output = $('#htmlJsxOutput');
-    
+
     const attrMap = {
       'class': 'className',
       'for': 'htmlFor',
@@ -2491,15 +2743,15 @@
       'srcdoc': 'srcDoc',
       'srcset': 'srcSet'
     };
-    
+
     $('#convertToJsx').addEventListener('click', () => {
       let jsx = input.value;
-      
+
       // Convert attributes
       for (const [html, react] of Object.entries(attrMap)) {
         jsx = jsx.replace(new RegExp(`\\b${html}=`, 'gi'), `${react}=`);
       }
-      
+
       // Convert style attribute
       jsx = jsx.replace(/style="([^"]+)"/g, (match, styles) => {
         const styleObj = styles.split(';')
@@ -2512,13 +2764,13 @@
           .join(', ');
         return `style={{ ${styleObj} }}`;
       });
-      
+
       // Convert self-closing tags
       jsx = jsx.replace(/<(input|img|br|hr|meta|link)([^>]*[^/])>/gi, '<$1$2 />');
-      
+
       // Convert comments
       jsx = jsx.replace(/<!--([\s\S]*?)-->/g, '{/*$1*/}');
-      
+
       output.value = jsx;
       showToast(t('htmlToJsxSuccess'), 'success');
     });
@@ -2527,38 +2779,38 @@
   // ========================================
   // HTML Preview Tool
   // ========================================
-  
+
   function initHtmlPreviewTool() {
     const input = $('#htmlPreviewInput');
     const frame = $('#htmlPreviewFrame');
-    
+
     function updatePreview() {
       const doc = frame.contentDocument || frame.contentWindow.document;
       doc.open();
       doc.write(input.value);
       doc.close();
     }
-    
+
     input.addEventListener('input', updatePreview);
   }
 
   // ========================================
   // String Inspector Tool
   // ========================================
-  
+
   function initStringInspectorTool() {
     const input = $('#stringInspectorInput');
-    
+
     function updateStats() {
       const text = input.value;
-      
+
       $('#statChars').textContent = text.length;
       $('#statCharsNoSpace').textContent = text.replace(/\s/g, '').length;
       $('#statWords').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
       $('#statLines').textContent = text ? text.split('\n').length : 0;
       $('#statBytes').textContent = new Blob([text]).size;
       $('#statParagraphs').textContent = text.trim() ? text.trim().split(/\n\n+/).length : 0;
-      
+
       // Character details
       const charDetails = $('#charDetails');
       if (text.length <= 100) {
@@ -2568,7 +2820,7 @@
           return `<span class="char-item"><span class="char">${escapeHtml(display)}</span><span class="code">U+${code.toString(16).toUpperCase().padStart(4, '0')}</span></span>`;
         }).join('');
       } else {
-        charDetails.innerHTML = `<span style="color: var(--text-muted)">${t('textTooLong')}</span><br>` + 
+        charDetails.innerHTML = `<span style="color: var(--text-muted)">${t('textTooLong')}</span><br>` +
           Array.from(text.slice(0, 100)).map(char => {
             const code = char.charCodeAt(0);
             const display = char === ' ' ? '␣' : char === '\n' ? '↵' : char === '\t' ? '⇥' : char;
@@ -2576,44 +2828,44 @@
           }).join('');
       }
     }
-    
+
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
     }
-    
+
     input.addEventListener('input', updateStats);
   }
 
   // ========================================
   // Line Sort Tool
   // ========================================
-  
+
   function initLineSortTool() {
     const input = $('#lineSortInput');
     const output = $('#lineSortOutput');
-    
+
     $('#sortAsc').addEventListener('click', () => {
       output.value = input.value.split('\n').sort().join('\n');
       showToast(t('sortedAZ'), 'success');
     });
-    
+
     $('#sortDesc').addEventListener('click', () => {
       output.value = input.value.split('\n').sort().reverse().join('\n');
       showToast(t('sortedZA'), 'success');
     });
-    
+
     $('#dedupe').addEventListener('click', () => {
       output.value = [...new Set(input.value.split('\n'))].join('\n');
       showToast(t('duplicatesRemoved'), 'success');
     });
-    
+
     $('#reverse').addEventListener('click', () => {
       output.value = input.value.split('\n').reverse().join('\n');
       showToast(t('linesReversed'), 'success');
     });
-    
+
     $('#shuffle').addEventListener('click', () => {
       const lines = input.value.split('\n');
       for (let i = lines.length - 1; i > 0; i--) {
@@ -2623,7 +2875,7 @@
       output.value = lines.join('\n');
       showToast(t('linesShuffled'), 'success');
     });
-    
+
     $('#trimLines').addEventListener('click', () => {
       output.value = input.value.split('\n').filter(line => line.trim()).join('\n');
       showToast(t('emptyLinesRemoved'), 'success');
@@ -2633,30 +2885,30 @@
   // ========================================
   // HTML Format Tool
   // ========================================
-  
+
   function initHtmlFormatTool() {
     const input = $('#htmlFormatInput');
     const output = $('#htmlFormatOutput');
-    
+
     function beautifyHtml(html) {
       let formatted = '';
       let indent = 0;
       const tags = html.replace(/>\s*</g, '>\n<').split('\n');
-      
+
       tags.forEach(tag => {
         if (tag.match(/^<\/\w/)) indent--;
         formatted += '  '.repeat(Math.max(0, indent)) + tag.trim() + '\n';
         if (tag.match(/^<\w[^>]*[^\/]>$/)) indent++;
       });
-      
+
       return formatted.trim();
     }
-    
+
     $('#htmlBeautify').addEventListener('click', () => {
       output.value = beautifyHtml(input.value);
       showToast(t('htmlBeautified'), 'success');
     });
-    
+
     $('#htmlMinify').addEventListener('click', () => {
       output.value = input.value
         .replace(/\s+/g, ' ')
@@ -2671,11 +2923,11 @@
   // ========================================
   // CSS Format Tool
   // ========================================
-  
+
   function initCssFormatTool() {
     const input = $('#cssFormatInput');
     const output = $('#cssFormatOutput');
-    
+
     $('#cssBeautify').addEventListener('click', () => {
       let css = input.value;
       css = css.replace(/\s*{\s*/g, ' {\n  ');
@@ -2685,7 +2937,7 @@
       output.value = css.trim();
       showToast(t('cssBeautified'), 'success');
     });
-    
+
     $('#cssMinify').addEventListener('click', () => {
       output.value = input.value
         .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -2700,22 +2952,22 @@
   // ========================================
   // JS Format Tool
   // ========================================
-  
+
   function initJsFormatTool() {
     const input = $('#jsFormatInput');
     const output = $('#jsFormatOutput');
-    
+
     $('#jsBeautify').addEventListener('click', () => {
       let js = input.value;
       let indent = 0;
       let formatted = '';
       let inString = false;
       let stringChar = '';
-      
+
       for (let i = 0; i < js.length; i++) {
         const char = js[i];
         const prev = js[i - 1];
-        
+
         if ((char === '"' || char === "'" || char === '`') && prev !== '\\') {
           if (!inString) {
             inString = true;
@@ -2724,7 +2976,7 @@
             inString = false;
           }
         }
-        
+
         if (!inString) {
           if (char === '{' || char === '[') {
             formatted += char + '\n' + '  '.repeat(++indent);
@@ -2741,11 +2993,11 @@
           formatted += char;
         }
       }
-      
+
       output.value = formatted.replace(/\n\s*\n/g, '\n').trim();
       showToast(t('jsBeautified'), 'success');
     });
-    
+
     $('#jsMinify').addEventListener('click', () => {
       let js = input.value;
       // Simple minification, preserving strings
@@ -2761,19 +3013,19 @@
   // ========================================
   // XML Format Tool
   // ========================================
-  
+
   function initXmlFormatTool() {
     const input = $('#xmlFormatInput');
     const output = $('#xmlFormatOutput');
-    
+
     $('#xmlBeautify').addEventListener('click', () => {
       let xml = input.value;
       let formatted = '';
       let indent = 0;
-      
+
       xml = xml.replace(/>\s*</g, '><');
       const tags = xml.match(/<[^>]+>|[^<]+/g) || [];
-      
+
       tags.forEach(tag => {
         if (tag.match(/^<\/\w/)) {
           indent--;
@@ -2789,11 +3041,11 @@
           formatted += '  '.repeat(indent) + tag.trim() + '\n';
         }
       });
-      
+
       output.value = formatted.trim();
       showToast(t('xmlBeautified'), 'success');
     });
-    
+
     $('#xmlMinify').addEventListener('click', () => {
       output.value = input.value.replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim();
       showToast(t('xmlMinified'), 'success');
@@ -2803,33 +3055,33 @@
   // ========================================
   // SQL Format Tool
   // ========================================
-  
+
   function initSqlFormatTool() {
     const input = $('#sqlFormatInput');
     const output = $('#sqlFormatOutput');
-    
-    const keywords = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 
-                      'HAVING', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'OUTER JOIN',
-                      'ON', 'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE',
-                      'TABLE', 'INDEX', 'DROP', 'ALTER', 'ADD', 'LIMIT', 'OFFSET', 'AS',
-                      'DISTINCT', 'COUNT', 'SUM', 'AVG', 'MAX', 'MIN', 'UNION', 'ALL'];
-    
+
+    const keywords = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'ORDER BY', 'GROUP BY',
+      'HAVING', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'OUTER JOIN',
+      'ON', 'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE',
+      'TABLE', 'INDEX', 'DROP', 'ALTER', 'ADD', 'LIMIT', 'OFFSET', 'AS',
+      'DISTINCT', 'COUNT', 'SUM', 'AVG', 'MAX', 'MIN', 'UNION', 'ALL'];
+
     $('#sqlBeautify').addEventListener('click', () => {
       let sql = input.value.trim();
-      
+
       // Add newlines before keywords
       keywords.forEach(kw => {
         const regex = new RegExp(`\\b${kw}\\b`, 'gi');
         sql = sql.replace(regex, '\n' + kw.toUpperCase());
       });
-      
+
       // Indent
       let formatted = '';
       let indent = 0;
       sql.split('\n').forEach(line => {
         line = line.trim();
         if (!line) return;
-        
+
         if (line.match(/^(FROM|WHERE|ORDER BY|GROUP BY|HAVING|JOIN|LEFT|RIGHT|INNER|OUTER)/i)) {
           indent = 1;
         } else if (line.match(/^(AND|OR|ON)/i)) {
@@ -2837,14 +3089,14 @@
         } else if (line.match(/^SELECT/i)) {
           indent = 0;
         }
-        
+
         formatted += '  '.repeat(indent) + line + '\n';
       });
-      
+
       output.value = formatted.trim();
       showToast(t('sqlBeautified'), 'success');
     });
-    
+
     $('#sqlMinify').addEventListener('click', () => {
       output.value = input.value.replace(/\s+/g, ' ').trim();
       showToast(t('sqlMinified'), 'success');
@@ -2854,24 +3106,24 @@
   // ========================================
   // Cron Parser Tool
   // ========================================
-  
+
   function initCronParserTool() {
     const input = $('#cronInput');
     const description = $('#cronDescription');
     const nextRuns = $('#cronNextRuns');
-    
+
     function describeCron(cron) {
       const parts = cron.trim().split(/\s+/);
       if (parts.length < 5) return t('invalidCronExpression');
-      
+
       const [min, hour, day, month, weekday] = parts;
-      
+
       let desc = '';
-      
+
       if (min === '*' && hour === '*' && day === '*' && month === '*' && weekday === '*') {
         return t('cronEveryMinute');
       }
-      
+
       if (min === '0' && hour === '*') {
         desc = t('cronEveryHourAt0');
       } else if (min === '0' && hour === '0' && day === '*') {
@@ -2883,7 +3135,7 @@
       } else {
         desc = t('cronAtTime', { time: `${hour}:${min.padStart(2, '0')}` });
       }
-      
+
       if (weekday !== '*') {
         const days = [t('sun'), t('mon'), t('tue'), t('wed'), t('thu'), t('fri'), t('sat')];
         if (weekday.includes('-')) {
@@ -2893,39 +3145,39 @@
           desc += ' ' + t('cronOn', { day: days[weekday] || weekday });
         }
       }
-      
+
       if (day !== '*') {
         desc += ' ' + t('cronOnDay', { day });
       }
-      
+
       if (month !== '*') {
         desc += ' ' + t('cronInMonth', { month });
       }
-      
+
       return desc;
     }
-    
+
     function getNextRuns(cron, count = 5) {
       // Simplified implementation: return next few execution times
       const runs = [];
       const now = new Date();
       const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
-      
+
       for (let i = 0; i < count; i++) {
         const next = new Date(now.getTime() + (i + 1) * 60000);
         runs.push(next.toLocaleString(locale));
       }
-      
+
       return runs;
     }
-    
+
     $('#parseCron').addEventListener('click', () => {
       const cron = input.value.trim();
       description.textContent = describeCron(cron);
-      
+
       const runs = getNextRuns(cron);
       nextRuns.innerHTML = runs.map(run => `<li>${run}</li>`).join('');
-      
+
       showToast(t('cronParsed'), 'success');
     });
   }
@@ -2933,11 +3185,11 @@
   // ========================================
   // cURL to Code Tool
   // ========================================
-  
+
   function initCurlCodeTool() {
     const input = $('#curlInput');
     const output = $('#curlOutput');
-    
+
     function parseCurl(curl) {
       const result = {
         method: 'GET',
@@ -2945,126 +3197,126 @@
         headers: {},
         data: null
       };
-      
+
       // Extract URL
-      const urlMatch = curl.match(/curl\s+(?:["']([^"']+)["']|(\S+))/i) || 
-                       curl.match(/https?:\/\/[^\s"']+/);
+      const urlMatch = curl.match(/curl\s+(?:["']([^"']+)["']|(\S+))/i) ||
+        curl.match(/https?:\/\/[^\s"']+/);
       if (urlMatch) {
         result.url = urlMatch[1] || urlMatch[2] || urlMatch[0];
       }
-      
+
       // Extract method
       const methodMatch = curl.match(/-X\s+(\w+)/i);
       if (methodMatch) {
         result.method = methodMatch[1].toUpperCase();
       }
-      
+
       // Extract headers
       const headerMatches = curl.matchAll(/-H\s+["']([^"']+)["']/gi);
       for (const match of headerMatches) {
         const [key, ...vals] = match[1].split(':');
         result.headers[key.trim()] = vals.join(':').trim();
       }
-      
+
       // Extract data
       const dataMatch = curl.match(/-d\s+["']([^"']+)["']/i) ||
-                        curl.match(/--data\s+["']([^"']+)["']/i);
+        curl.match(/--data\s+["']([^"']+)["']/i);
       if (dataMatch) {
         result.data = dataMatch[1];
         if (result.method === 'GET') result.method = 'POST';
       }
-      
+
       return result;
     }
-    
+
     function toJavaScript(parsed) {
       let code = `fetch('${parsed.url}'`;
-      
+
       const options = {};
       if (parsed.method !== 'GET') options.method = parsed.method;
       if (Object.keys(parsed.headers).length) options.headers = parsed.headers;
       if (parsed.data) options.body = parsed.data;
-      
+
       if (Object.keys(options).length) {
         code += `, ${JSON.stringify(options, null, 2)}`;
       }
-      
+
       code += `)\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => console.error('Error:', error));`;
-      
+
       return code;
     }
-    
+
     function toPython(parsed) {
       let code = `import requests\n\n`;
       code += `url = "${parsed.url}"\n`;
-      
+
       if (Object.keys(parsed.headers).length) {
         code += `headers = ${JSON.stringify(parsed.headers, null, 2)}\n`;
       }
-      
+
       if (parsed.data) {
         code += `data = '${parsed.data}'\n`;
       }
-      
+
       code += `\nresponse = requests.${parsed.method.toLowerCase()}(url`;
       if (Object.keys(parsed.headers).length) code += `, headers=headers`;
       if (parsed.data) code += `, data=data`;
       code += `)\nprint(response.json())`;
-      
+
       return code;
     }
-    
+
     function toPhp(parsed) {
       let code = `<?php\n$ch = curl_init();\n\n`;
       code += `curl_setopt($ch, CURLOPT_URL, "${parsed.url}");\n`;
       code += `curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n`;
-      
+
       if (parsed.method !== 'GET') {
         code += `curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "${parsed.method}");\n`;
       }
-      
+
       if (Object.keys(parsed.headers).length) {
         const headers = Object.entries(parsed.headers).map(([k, v]) => `"${k}: ${v}"`).join(',\n  ');
         code += `curl_setopt($ch, CURLOPT_HTTPHEADER, [\n  ${headers}\n]);\n`;
       }
-      
+
       if (parsed.data) {
         code += `curl_setopt($ch, CURLOPT_POSTFIELDS, '${parsed.data}');\n`;
       }
-      
+
       code += `\n$response = curl_exec($ch);\ncurl_close($ch);\necho $response;\n?>`;
-      
+
       return code;
     }
-    
+
     function toGo(parsed) {
       let code = `package main\n\nimport (\n  "fmt"\n  "net/http"\n  "io/ioutil"\n`;
       if (parsed.data) code += `  "strings"\n`;
       code += `)\n\nfunc main() {\n`;
-      
+
       if (parsed.data) {
         code += `  body := strings.NewReader(\`${parsed.data}\`)\n`;
         code += `  req, _ := http.NewRequest("${parsed.method}", "${parsed.url}", body)\n`;
       } else {
         code += `  req, _ := http.NewRequest("${parsed.method}", "${parsed.url}", nil)\n`;
       }
-      
+
       for (const [key, value] of Object.entries(parsed.headers)) {
         code += `  req.Header.Set("${key}", "${value}")\n`;
       }
-      
+
       code += `\n  client := &http.Client{}\n  resp, _ := client.Do(req)\n  defer resp.Body.Close()\n\n  body, _ := ioutil.ReadAll(resp.Body)\n  fmt.Println(string(body))\n}`;
-      
+
       return code;
     }
-    
+
     function toJava(parsed) {
       let code = `import java.net.http.*;\nimport java.net.URI;\n\n`;
       code += `public class Main {\n  public static void main(String[] args) throws Exception {\n`;
       code += `    HttpClient client = HttpClient.newHttpClient();\n`;
       code += `    HttpRequest request = HttpRequest.newBuilder()\n`;
       code += `      .uri(URI.create("${parsed.url}"))\n`;
-      
+
       if (parsed.method !== 'GET') {
         if (parsed.data) {
           code += `      .${parsed.method}(HttpRequest.BodyPublishers.ofString("${parsed.data.replace(/"/g, '\\"')}"))\n`;
@@ -3072,23 +3324,23 @@
           code += `      .${parsed.method}(HttpRequest.BodyPublishers.noBody())\n`;
         }
       }
-      
+
       for (const [key, value] of Object.entries(parsed.headers)) {
         code += `      .header("${key}", "${value}")\n`;
       }
-      
+
       code += `      .build();\n\n`;
       code += `    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());\n`;
       code += `    System.out.println(response.body());\n  }\n}`;
-      
+
       return code;
     }
-    
+
     $('#convertCurl').addEventListener('click', () => {
       try {
         const parsed = parseCurl(input.value);
         const lang = $('#curlTargetLang').value;
-        
+
         let code;
         switch (lang) {
           case 'javascript': code = toJavaScript(parsed); break;
@@ -3097,7 +3349,7 @@
           case 'go': code = toGo(parsed); break;
           case 'java': code = toJava(parsed); break;
         }
-        
+
         output.value = code;
         showToast(t('curlConverted'), 'success');
       } catch (err) {
@@ -3109,20 +3361,20 @@
   // ========================================
   // JSON to Code Tool
   // ========================================
-  
+
   function initJsonCodeTool() {
     const input = $('#jsonCodeInput');
     const output = $('#jsonCodeOutput');
-    
+
     function getType(value) {
       if (value === null) return 'null';
       if (Array.isArray(value)) return 'array';
       return typeof value;
     }
-    
+
     function toTypeScript(obj, name = 'Root') {
       let code = `interface ${name} {\n`;
-      
+
       for (const [key, value] of Object.entries(obj)) {
         let type;
         switch (getType(value)) {
@@ -3143,14 +3395,14 @@
         }
         code += `  ${key}: ${type};\n`;
       }
-      
+
       code += `}\n`;
       return code;
     }
-    
+
     function toGoStruct(obj, name = 'Root') {
       let code = `type ${name} struct {\n`;
-      
+
       for (const [key, value] of Object.entries(obj)) {
         const fieldName = key.charAt(0).toUpperCase() + key.slice(1);
         let type;
@@ -3165,14 +3417,14 @@
         }
         code += `\t${fieldName} ${type} \`json:"${key}"\`\n`;
       }
-      
+
       code += `}\n`;
       return code;
     }
-    
+
     function toPythonDataclass(obj, name = 'Root') {
       let code = `from dataclasses import dataclass\nfrom typing import Optional, List\n\n@dataclass\nclass ${name}:\n`;
-      
+
       for (const [key, value] of Object.entries(obj)) {
         let type;
         switch (getType(value)) {
@@ -3186,13 +3438,13 @@
         }
         code += `    ${key}: ${type}\n`;
       }
-      
+
       return code;
     }
-    
+
     function toSwiftStruct(obj, name = 'Root') {
       let code = `struct ${name}: Codable {\n`;
-      
+
       for (const [key, value] of Object.entries(obj)) {
         let type;
         switch (getType(value)) {
@@ -3206,14 +3458,14 @@
         }
         code += `    let ${key}: ${type}\n`;
       }
-      
+
       code += `}\n`;
       return code;
     }
-    
+
     function toJavaClass(obj, name = 'Root') {
       let code = `public class ${name} {\n`;
-      
+
       for (const [key, value] of Object.entries(obj)) {
         let type;
         switch (getType(value)) {
@@ -3227,7 +3479,7 @@
         }
         code += `    private ${type} ${key};\n`;
       }
-      
+
       code += `\n    // Getters and Setters\n`;
       for (const [key, value] of Object.entries(obj)) {
         const methodName = key.charAt(0).toUpperCase() + key.slice(1);
@@ -3241,17 +3493,17 @@
         code += `    public ${type} get${methodName}() { return ${key}; }\n`;
         code += `    public void set${methodName}(${type} ${key}) { this.${key} = ${key}; }\n`;
       }
-      
+
       code += `}\n`;
       return code;
     }
-    
+
     $('#convertJsonCode').addEventListener('click', () => {
       try {
         const obj = JSON.parse(input.value);
         const lang = $('#jsonTargetLang').value;
         const name = $('#jsonRootName').value || 'Root';
-        
+
         let code;
         switch (lang) {
           case 'typescript': code = toTypeScript(obj, name); break;
@@ -3260,7 +3512,7 @@
           case 'swift': code = toSwiftStruct(obj, name); break;
           case 'java': code = toJavaClass(obj, name); break;
         }
-        
+
         output.value = code;
         showToast(t('jsonConvertedToCode'), 'success');
       } catch (err) {
@@ -3272,19 +3524,19 @@
   // ========================================
   // Certificate Decoder Tool
   // ========================================
-  
+
   function initCertDecoderTool() {
     const input = $('#certInput');
     const output = $('#certOutput');
-    
+
     $('#decodeCert').addEventListener('click', () => {
       const pem = input.value.trim();
-      
+
       if (!pem.includes('-----BEGIN CERTIFICATE-----')) {
         showToast(t('enterValidPemCert'), 'error');
         return;
       }
-      
+
       // Simple certificate info extraction (full parsing requires ASN.1 library)
       output.innerHTML = `
         <div class="cert-field">
@@ -3303,7 +3555,7 @@
           <span>${t('certFullParsingNote')}</span>
         </div>
       `;
-      
+
       showToast(t('certDecoded'), 'success');
     });
   }
@@ -3311,33 +3563,33 @@
   // ========================================
   // SVG to CSS Tool
   // ========================================
-  
+
   function initSvgCssTool() {
     const input = $('#svgInput');
     const output = $('#svgCssOutput');
     const preview = $('#svgPreview');
-    
+
     $('#convertSvgCss').addEventListener('click', () => {
       let svg = input.value.trim();
-      
+
       if (!svg.includes('<svg')) {
         showToast(t('enterValidSvg'), 'error');
         return;
       }
-      
+
       // Encode SVG for CSS
       const encoded = encodeURIComponent(svg)
         .replace(/'/g, '%27')
         .replace(/"/g, '%22');
-      
+
       const dataUri = `url("data:image/svg+xml,${encoded}")`;
-      
+
       output.value = `.element {\n  background-image: ${dataUri};\n  background-repeat: no-repeat;\n  background-size: contain;\n}`;
-      
+
       // Show preview
       preview.style.backgroundImage = dataUri;
       preview.style.minHeight = '100px';
-      
+
       showToast(t('svgConvertedToCss'), 'success');
     });
   }
@@ -3345,13 +3597,13 @@
   // ========================================
   // Initialize All Tools
   // ========================================
-  
+
   function init() {
     initLanguage();
     initTheme();
     initNavigation();
     initEditorActions();
-    
+
     // Encoding / Decoding
     initJsonTool();
     initBase64Tool();
@@ -3360,14 +3612,14 @@
     initHtmlEntityTool();
     initBackslashTool();
     initJwtTool();
-    
+
     // Generators
     initUuidTool();
     initHashTool();
     initPasswordTool();
     initLoremTool();
     initQRCodeTool();
-    
+
     // Converters
     initUnixTimeTool();
     initNumberBaseTool();
@@ -3377,7 +3629,7 @@
     initCsvJsonTool();
     initHexAsciiTool();
     initHtmlJsxTool();
-    
+
     // Text Tools
     initDiffTool();
     initRegexTool();
@@ -3385,24 +3637,76 @@
     initHtmlPreviewTool();
     initStringInspectorTool();
     initLineSortTool();
-    
+
     // Formatters
     initHtmlFormatTool();
     initCssFormatTool();
     initJsFormatTool();
     initXmlFormatTool();
     initSqlFormatTool();
-    
+
     // Developer Tools
     initCronParserTool();
     initCurlCodeTool();
     initJsonCodeTool();
     initCertDecoderTool();
     initSvgCssTool();
-    
+
+    // Initialize sidebar toggle
+    initSidebarToggle();
+
     console.log('DevTools initialized with 40+ tools and i18n support! 🚀');
   }
-  
+
+  // ========================================
+  // Sidebar Toggle
+  // ========================================
+
+  function initSidebarToggle() {
+    var sidebar = $('.sidebar');
+    var sidebarToggle = $('#sidebarToggle');
+    var sidebarExpandBtn = $('#sidebarExpandBtn');
+
+    // Toggle sidebar collapse
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function () {
+        sidebar.classList.toggle('collapsed');
+
+        // Save state to localStorage
+        var isCollapsed = sidebar.classList.contains('collapsed');
+        try {
+          localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      });
+    }
+
+    // Expand sidebar button
+    if (sidebarExpandBtn) {
+      sidebarExpandBtn.addEventListener('click', function () {
+        sidebar.classList.remove('collapsed');
+
+        // Save state to localStorage
+        try {
+          localStorage.setItem('sidebarCollapsed', 'false');
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      });
+    }
+
+    // Restore collapsed state from localStorage
+    try {
+      var savedState = localStorage.getItem('sidebarCollapsed');
+      if (savedState === 'true') {
+        sidebar.classList.add('collapsed');
+      }
+    } catch (e) {
+      // Ignore localStorage errors
+    }
+  }
+
   // Wait for DOM
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
