@@ -1450,6 +1450,186 @@ body {
   text-transform: uppercase;
 }
 
+/* ========================================
+   MD5 Tool Styles
+   ======================================== */
+
+/* MD5 Tabs */
+.md5-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 2px;
+}
+
+.md5-tab {
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-bottom: -2px;
+}
+
+.md5-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.md5-tab.active {
+  color: var(--accent-primary);
+  border-bottom-color: var(--accent-primary);
+}
+
+.md5-tab-content {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.md5-tab-content.active {
+  display: flex;
+}
+
+/* File Upload Area */
+.file-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.file-upload-area:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-hover);
+}
+
+.file-upload-area.dragover {
+  border-color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.file-upload-area svg {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.file-upload-area p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.file-info {
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.file-info-item {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.file-info-item:last-child {
+  border-bottom: none;
+}
+
+.file-info-item label {
+  min-width: 100px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.file-info-item span {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+/* Verify File Upload */
+.verify-file-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.verify-file-upload span {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* Verify Result */
+.verify-result {
+  padding: 20px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.verify-result.match {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success);
+  border: 2px solid var(--success);
+}
+
+.verify-result.mismatch {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error);
+  border: 2px solid var(--error);
+}
+
+.verify-result svg {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  z-index: 1;
+}
+
 .stat-item span {
   font-size: 1.5rem;
   font-weight: 700;

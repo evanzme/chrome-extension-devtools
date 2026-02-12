@@ -94,6 +94,10 @@
               <span class="tool-icon">#</span>
               <span>Hash Generator</span>
             </li>
+            <li class="tool-item" data-tool="md5">
+              <span class="tool-icon">🔐</span>
+              <span>MD5 Tool</span>
+            </li>
             <li class="tool-item" data-tool="password">
               <span class="tool-icon">🔑</span>
               <span>Password Generator</span>
@@ -541,6 +545,180 @@
                   </svg>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MD5 Tool -->
+      <div class="tool-panel" id="tool-md5">
+        <div class="tool-header">
+          <h1>MD5 Generator & Validator</h1>
+          <p class="tool-desc">Generate MD5 hash, validate files, and batch processing</p>
+        </div>
+        <div class="tool-body">
+          <!-- Tab Navigation -->
+          <div class="md5-tabs">
+            <button class="md5-tab active" data-tab="text">Text Hash</button>
+            <button class="md5-tab" data-tab="file">File Hash</button>
+            <button class="md5-tab" data-tab="verify">Verify</button>
+            <button class="md5-tab" data-tab="batch">Batch</button>
+          </div>
+
+          <!-- Text Hash Tab -->
+          <div class="md5-tab-content active" id="md5-text-tab">
+            <div class="editor-container">
+              <div class="editor-header">
+                <span>Input Text</span>
+                <div class="editor-actions">
+                  <button class="btn-icon" data-action="paste" title="Paste">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
+                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                    </svg>
+                  </button>
+                  <button class="btn-icon" data-action="clear" title="Clear">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <textarea id="md5TextInput" class="code-editor" placeholder="Enter text to generate MD5 hash"></textarea>
+            </div>
+            <div class="option-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="md5Uppercase"> Uppercase
+              </label>
+            </div>
+            <div class="tool-actions">
+              <button class="btn btn-primary" id="generateMd5Text">Generate MD5</button>
+            </div>
+            <div class="hash-results">
+              <div class="hash-item">
+                <label>MD5 Hash</label>
+                <div class="hash-value-container">
+                  <input type="text" id="md5TextOutput" class="hash-value" readonly>
+                  <button class="btn-icon btn-copy" data-target="md5TextOutput" title="Copy">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- File Hash Tab -->
+          <div class="md5-tab-content" id="md5-file-tab">
+            <div class="file-upload-area" id="md5FileUpload">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+              </svg>
+              <p>Drop file here or click to upload</p>
+              <input type="file" id="md5FileInput" style="display: none;">
+            </div>
+            <div id="md5FileInfo" class="file-info" style="display: none;">
+              <div class="file-info-item">
+                <label>File Name:</label>
+                <span id="md5FileName"></span>
+              </div>
+              <div class="file-info-item">
+                <label>File Size:</label>
+                <span id="md5FileSize"></span>
+              </div>
+              <div class="file-info-item">
+                <label>File Type:</label>
+                <span id="md5FileType"></span>
+              </div>
+            </div>
+            <div class="option-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="md5FileUppercase"> Uppercase
+              </label>
+            </div>
+            <div class="tool-actions">
+              <button class="btn btn-primary" id="generateMd5File" disabled>Calculate MD5</button>
+            </div>
+            <div class="hash-results">
+              <div class="hash-item">
+                <label>MD5 Hash</label>
+                <div class="hash-value-container">
+                  <input type="text" id="md5FileOutput" class="hash-value" readonly>
+                  <button class="btn-icon btn-copy" data-target="md5FileOutput" title="Copy">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="md5Progress" class="progress-bar" style="display: none;">
+              <div class="progress-fill"></div>
+              <span class="progress-text">0%</span>
+            </div>
+          </div>
+
+          <!-- Verify Tab -->
+          <div class="md5-tab-content" id="md5-verify-tab">
+            <div class="editor-container">
+              <div class="editor-header"><span>Input Text or Upload File</span></div>
+              <textarea id="md5VerifyInput" class="code-editor" placeholder="Enter text to verify"></textarea>
+            </div>
+            <div class="verify-file-upload">
+              <button class="btn btn-secondary" id="md5VerifyFileBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                </svg>
+                Or Upload File
+              </button>
+              <input type="file" id="md5VerifyFileInput" style="display: none;">
+              <span id="md5VerifyFileName"></span>
+            </div>
+            <div class="editor-container">
+              <div class="editor-header"><span>Expected MD5 Hash</span></div>
+              <input type="text" id="md5ExpectedHash" class="text-input mono" placeholder="Enter expected MD5 hash">
+            </div>
+            <div class="tool-actions">
+              <button class="btn btn-primary" id="verifyMd5">Verify MD5</button>
+            </div>
+            <div id="md5VerifyResult" class="verify-result"></div>
+          </div>
+
+          <!-- Batch Tab -->
+          <div class="md5-tab-content" id="md5-batch-tab">
+            <div class="editor-container">
+              <div class="editor-header"><span>Input (One item per line)</span></div>
+              <textarea id="md5BatchInput" class="code-editor"
+                placeholder="Enter multiple texts (one per line)&#10;Example:&#10;text1&#10;text2&#10;text3"></textarea>
+            </div>
+            <div class="option-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="md5BatchUppercase"> Uppercase
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="md5BatchShowInput" checked> Show Input
+              </label>
+            </div>
+            <div class="tool-actions">
+              <button class="btn btn-primary" id="generateMd5Batch">Generate Batch MD5</button>
+            </div>
+            <div class="editor-container">
+              <div class="editor-header">
+                <span>Output</span>
+                <div class="editor-actions">
+                  <button class="btn-icon" data-action="copy" title="Copy">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <textarea id="md5BatchOutput" class="code-editor" readonly
+                placeholder="Results will appear here"></textarea>
             </div>
           </div>
         </div>

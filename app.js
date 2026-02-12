@@ -1961,6 +1961,314 @@
   }
 
   // ========================================
+  // MD5 Tool
+  // ========================================
+
+  function initMd5Tool() {
+    // Tab switching
+    const tabs = $$('.md5-tab');
+    const tabContents = $$('.md5-tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.dataset.tab;
+
+        // Update tab states
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update content states
+        tabContents.forEach(content => {
+          if (content.id === `md5-${targetTab}-tab`) {
+            content.classList.add('active');
+          } else {
+            content.classList.remove('active');
+          }
+        });
+      });
+    });
+
+    // Enable auto-save for inputs
+    enableAutoSave('#md5TextInput', 'devtools_md5_text_input');
+    enableAutoSave('#md5BatchInput', 'devtools_md5_batch_input');
+
+    // ===== Text Hash Tab =====
+    $('#generateMd5Text').addEventListener('click', () => {
+      const text = $('#md5TextInput').value;
+      const uppercase = $('#md5Uppercase').checked;
+
+      if (!text) {
+        showToast(t('enterTextToHash'), 'error');
+        return;
+      }
+
+      try {
+        if (typeof md5 !== 'undefined') {
+          let hash = md5(text);
+          if (uppercase) hash = hash.toUpperCase();
+          $('#md5TextOutput').value = hash;
+          showToast(t('hashesGenerated'), 'success');
+        } else {
+          $('#md5TextOutput').value = t('md5LibNotLoaded');
+          showToast(t('md5LibNotLoaded'), 'error');
+        }
+      } catch (err) {
+        showToast(t('hashGenerationFailed') + ': ' + err.message, 'error');
+      }
+    });
+
+    // ===== File Hash Tab =====
+    let selectedFile = null;
+
+    const fileUploadArea = $('#md5FileUpload');
+    const fileInput = $('#md5FileInput');
+    const fileInfo = $('#md5FileInfo');
+    const generateFileBtn = $('#generateMd5File');
+
+    // Click to upload
+    fileUploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // Drag and drop
+    fileUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUploadArea.classList.add('dragover');
+    });
+
+    fileUploadArea.addEventListener('dragleave', () => {
+      fileUploadArea.classList.remove('dragover');
+    });
+
+    fileUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUploadArea.classList.remove('dragover');
+
+      if (e.dataTransfer.files.length > 0) {
+        handleFileSelect(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFileSelect(e.target.files[0]);
+      }
+    });
+
+    function handleFileSelect(file) {
+      selectedFile = file;
+      $('#md5FileName').textContent = file.name;
+      $('#md5FileSize').textContent = formatFileSize(file.size);
+      $('#md5FileType').textContent = file.type || 'Unknown';
+      fileInfo.style.display = 'block';
+      generateFileBtn.disabled = false;
+      $('#md5FileOutput').value = '';
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    generateFileBtn.addEventListener('click', async () => {
+      if (!selectedFile) return;
+
+      const uppercase = $('#md5FileUppercase').checked;
+      const progressBar = $('#md5Progress');
+      const progressFill = progressBar.querySelector('.progress-fill');
+      const progressText = progressBar.querySelector('.progress-text');
+
+      try {
+        progressBar.style.display = 'block';
+        const hash = await calculateFileMD5(selectedFile, (progress) => {
+          progressFill.style.width = progress + '%';
+          progressText.textContent = progress + '%';
+        });
+
+        let result = hash;
+        if (uppercase) result = result.toUpperCase();
+        $('#md5FileOutput').value = result;
+
+        progressFill.style.width = '100%';
+        progressText.textContent = '100%';
+
+        setTimeout(() => {
+          progressBar.style.display = 'none';
+          progressFill.style.width = '0%';
+        }, 1000);
+
+        showToast(t('hashesGenerated'), 'success');
+      } catch (err) {
+        progressBar.style.display = 'none';
+        showToast(t('hashGenerationFailed') + ': ' + err.message, 'error');
+      }
+    });
+
+    async function calculateFileMD5(file, onProgress) {
+      if (typeof md5 !== 'undefined') {
+        // Read file in chunks for large files
+        const chunkSize = 2 * 1024 * 1024; // 2MB chunks
+        const chunks = Math.ceil(file.size / chunkSize);
+        let currentChunk = 0;
+
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            try {
+              const hash = md5(e.target.result);
+              resolve(hash);
+            } catch (err) {
+              reject(err);
+            }
+          };
+
+          reader.onerror = function () {
+            reject(new Error('File read error'));
+          };
+
+          reader.onprogress = function (e) {
+            if (e.lengthComputable) {
+              const progress = Math.round((e.loaded / e.total) * 100);
+              if (onProgress) onProgress(progress);
+            }
+          };
+
+          reader.readAsText(file);
+        });
+      } else {
+        throw new Error('MD5 library not loaded');
+      }
+    }
+
+    // ===== Verify Tab =====
+    let verifyFile = null;
+    const verifyFileBtn = $('#md5VerifyFileBtn');
+    const verifyFileInput = $('#md5VerifyFileInput');
+
+    verifyFileBtn.addEventListener('click', () => {
+      verifyFileInput.click();
+    });
+
+    verifyFileInput.addEventListener('change', async (e) => {
+      if (e.target.files.length > 0) {
+        verifyFile = e.target.files[0];
+        $('#md5VerifyFileName').textContent = verifyFile.name;
+        $('#md5VerifyInput').value = ''; // Clear text input
+      }
+    });
+
+    $('#verifyMd5').addEventListener('click', async () => {
+      const expectedHash = $('#md5ExpectedHash').value.trim().toLowerCase();
+
+      if (!expectedHash) {
+        showToast('Please enter expected MD5 hash', 'error');
+        return;
+      }
+
+      let actualHash;
+
+      try {
+        if (verifyFile) {
+          // Verify file
+          actualHash = await calculateFileMD5(verifyFile, null);
+        } else {
+          // Verify text
+          const text = $('#md5VerifyInput').value;
+          if (!text) {
+            showToast('Please enter text or upload file', 'error');
+            return;
+          }
+          if (typeof md5 !== 'undefined') {
+            actualHash = md5(text);
+          } else {
+            throw new Error('MD5 library not loaded');
+          }
+        }
+
+        actualHash = actualHash.toLowerCase();
+        const resultDiv = $('#md5VerifyResult');
+
+        if (actualHash === expectedHash) {
+          resultDiv.className = 'verify-result match';
+          resultDiv.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <div>✓ MD5 Hash Match!</div>
+            <div style="font-size: 0.85rem; margin-top: 8px; font-weight: normal;">
+              ${actualHash}
+            </div>
+          `;
+          showToast('MD5 verified successfully', 'success');
+        } else {
+          resultDiv.className = 'verify-result mismatch';
+          resultDiv.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <div>✗ MD5 Hash Mismatch</div>
+            <div style="font-size: 0.85rem; margin-top: 8px; font-weight: normal;">
+              <div>Expected: ${expectedHash}</div>
+              <div>Actual: ${actualHash}</div>
+            </div>
+          `;
+          showToast('MD5 mismatch', 'error');
+        }
+      } catch (err) {
+        showToast(t('hashGenerationFailed') + ': ' + err.message, 'error');
+      }
+    });
+
+    // ===== Batch Tab =====
+    $('#generateMd5Batch').addEventListener('click', () => {
+      const input = $('#md5BatchInput').value;
+      const uppercase = $('#md5BatchUppercase').checked;
+      const showInput = $('#md5BatchShowInput').checked;
+
+      if (!input.trim()) {
+        showToast('Please enter text to hash', 'error');
+        return;
+      }
+
+      try {
+        if (typeof md5 === 'undefined') {
+          showToast(t('md5LibNotLoaded'), 'error');
+          return;
+        }
+
+        const lines = input.split('\n').filter(line => line.trim());
+        const results = [];
+
+        lines.forEach(line => {
+          let hash = md5(line);
+          if (uppercase) hash = hash.toUpperCase();
+
+          if (showInput) {
+            results.push(`${line} : ${hash}`);
+          } else {
+            results.push(hash);
+          }
+        });
+
+        $('#md5BatchOutput').value = results.join('\n');
+        showToast(`Generated ${results.length} MD5 hashes`, 'success');
+      } catch (err) {
+        showToast(t('hashGenerationFailed') + ': ' + err.message, 'error');
+      }
+    });
+
+    // Setup editor actions (paste/clear/copy)
+    setupEditorActions('#tool-md5');
+  }
+
+  // ========================================
   // Password Generator Tool
   // ========================================
 
@@ -3616,6 +3924,7 @@
     // Generators
     initUuidTool();
     initHashTool();
+    initMd5Tool();
     initPasswordTool();
     initLoremTool();
     initQRCodeTool();
