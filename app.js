@@ -130,6 +130,8 @@
       format: 'Format',
       minify: 'Minify',
       validate: 'Validate',
+      collapseAll: 'Collapse All',
+      expandAll: 'Expand All',
       encode: 'Encode',
       decode: 'Decode',
       convert: 'Convert',
@@ -520,6 +522,8 @@
       format: '格式化',
       minify: '压缩',
       validate: '验证',
+      collapseAll: '全部折叠',
+      expandAll: '全部展开',
       encode: '编码',
       decode: '解码',
       convert: '转换',
@@ -988,6 +992,8 @@
     updateButtonText('jsonFormat', 'format');
     updateButtonText('jsonMinify', 'minify');
     updateButtonText('jsonValidate', 'validate');
+    updateButtonText('jsonCollapseAll', 'collapseAll');
+    updateButtonText('jsonExpandAll', 'expandAll');
     updateButtonText('base64Encode', 'encode');
     updateButtonText('base64Decode', 'decode');
     updateButtonText('urlEncode', 'encode');
@@ -1445,8 +1451,20 @@
         }
       } else if (action === 'paste' && textarea) {
         textarea.value = await pasteFromClipboard();
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
       } else if (action === 'clear' && textarea) {
         textarea.value = '';
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        if (textarea.id === 'jsonInput') {
+          const jsonTreeOutput = $('#jsonTreeOutput');
+          const jsonStatus = $('#jsonStatus');
+          if (jsonTreeOutput) jsonTreeOutput.innerHTML = '';
+          if (jsonStatus) {
+            jsonStatus.textContent = '';
+            jsonStatus.className = 'status-bar';
+          }
+          clearAutoSave('devtools_json_output');
+        }
       }
     });
 
@@ -1469,7 +1487,6 @@
 
   function initJsonTool() {
     const input = $('#jsonInput');
-    const output = $('#jsonOutput');
     const status = $('#jsonStatus');
     const jsonTreeOutput = $('#jsonTreeOutput');
 
@@ -1486,6 +1503,18 @@
       container.innerHTML = '';
       var rootNode = createJsonNode(data, 'root', true);
       container.appendChild(rootNode);
+    }
+
+    function setAllNodesCollapsed(collapsed) {
+      const nodes = jsonTreeOutput.querySelectorAll('.json-tree-node');
+      nodes.forEach(node => {
+        const toggle = node.querySelector(':scope > .json-tree-line > .json-toggle');
+        if (!toggle || toggle.classList.contains('empty')) return;
+
+        node.classList.toggle('collapsed', collapsed);
+        toggle.classList.toggle('collapsed', collapsed);
+        toggle.classList.toggle('expanded', !collapsed);
+      });
     }
 
     // Restore saved JSON output on load
@@ -1540,6 +1569,14 @@
       } catch (err) {
         updateStatus(`${t('invalidJson')}: ${err.message}`, 'error');
       }
+    });
+
+    $('#jsonCollapseAll').addEventListener('click', () => {
+      setAllNodesCollapsed(true);
+    });
+
+    $('#jsonExpandAll').addEventListener('click', () => {
+      setAllNodesCollapsed(false);
     });
 
     function createJsonNode(value, key, isRoot) {
@@ -2264,8 +2301,6 @@
       }
     });
 
-    // Setup editor actions (paste/clear/copy)
-    setupEditorActions('#tool-md5');
   }
 
   // ========================================
@@ -4008,7 +4043,7 @@
     // Restore collapsed state from localStorage
     try {
       var savedState = localStorage.getItem('sidebarCollapsed');
-      if (savedState === 'true') {
+      if (savedState === 'true' || window.matchMedia('(max-width: 1200px)').matches) {
         sidebar.classList.add('collapsed');
       }
     } catch (e) {
